@@ -1,0 +1,49 @@
+Package: condimentsPaper
+Title: Package to accompany the condiments Paper
+Version: 0.0.0.9000
+Authors@R: 
+    c(person("Hector", "Roux de Bezieux", role = c("aut", "cre"),
+                     email = "hector.rouxdebezieux@berkeley.edu",
+		     comment = c(ORCID = "0000-0002-1489-8339")),
+		person("Koen", "Van den Berge", role = c("aut" , "ctb")),
+		person("Kelly","Street", role = c("aut", "ctb")))
+Description: This package is meant to help provide reproductiblity on our paper condiments
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Imports: 
+    SingleCellExperiment,
+    slingshot,
+    stringr,
+    dplyr,
+    openxlsx,
+    Seurat,
+    SummarizedExperiment,
+    magrittr,
+    GEOquery,
+    DropletUtils,
+    readr,
+    cowplot,
+    pheatmap,
+    here,
+    tradeSeq,
+    ggplot2,
+    condiments,
+    fgsea,
+    msigdbr,
+    scales,
+    scater,
+    RColorBrewer,
+    tidyr,
+    tidygraph,
+    ggraph,
+    dyngen,
+    igraph,
+    grid,
+    DAseq,
+    miloR,
+    dynutils
+Depends: 
+    R (>= 2.10)
