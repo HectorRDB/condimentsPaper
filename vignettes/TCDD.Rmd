@@ -1,0 +1,259 @@
+---
+title: 'Analysis of the TCDD datataset'
+author: "Hector Roux de Bézieux"
+bibliography: ref.bib
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Analysis of the TCDD dataset}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r packages, include=F}
+library(knitr)
+opts_chunk$set(
+  fig.pos = "!h", out.extra = "", warning = F, 
+  fig.align = "center"
+)
+```
+
+
+The dataset we will be working with concerns a single-cell RNA-sequencing dataset consisting of two different experiments, which correspond to treatment (TCDD) and control. Nault et al. [@Nault2021] studied the effect of that drug on the liver, along the central-portal axis.
+
+```{r, include = FALSE}
+libs <- c("dplyr", "stringr", "Seurat", "SingleCellExperiment", "slingshot",
+          "condiments", "ggplot2", "cowplot", "tradeSeq", "RColorBrewer",
+          "pheatmap", "scales")
+suppressMessages(
+  suppressWarnings(sapply(libs, require, character.only = TRUE))
+)
+rm(libs)
+theme_set(theme_classic())
+pal <- c("#729ECE", "#FF9E4A", "#67BF5C", "#ED665D", "#AD8BC9",
+         "#A8786E", "#ED97CA", "#A2A2A2", "#CDCC5D", "#6DCCDA")
+```
+
+# Load data 
+
+```{r, eval = FALSE}
+cds <- condimentsPaper::import_TCDD()
+# Get zonal genes ----
+url <- paste0("https://static-content.springer.com/esm/art%3A10.1038%2Fnature",
+              "21065/MediaObjects/41586_2017_BFnature21065_MOESM62_ESM.xlsx")
+df <- openxlsx::read.xlsx(url, startRow = 3, na.strings = "NaN")
+df <- df[, c(1, 21)] %>%
+  dplyr::rename("qvalues" = `q-values`) %>%
+  dplyr::filter(!is.na(qvalues), qvalues < .005) %>%
+  dplyr::select(Gene.Symbol)
+zone.mat <- df$Gene.Symbol %>% stringr::str_split(";") %>% unlist()
+# Filter to only keep hepatocytes
+hepatocytes <- subset(cds, subset = celltype.ontology == "CL:0000182:Hepatocyte")
+common.genes <- intersect(zone.mat, rownames(hepatocytes))
+DefaultAssay(hepatocytes) <- "integrated"
+hepatocytes <- ScaleData(hepatocytes, verbose = FALSE)
+hepatocytes <- RunPCA(hepatocytes, features = common.genes, verbose = FALSE)
+hepatocytes <- RunUMAP(hepatocytes, dims = 1:30, verbose = FALSE)
+tcdd <- as.SingleCellExperiment(hepatocytes, assay = "RNA")
+tcdd$celltype <- droplevels(tcdd$celltype) %>%
+  stringr::str_remove("Hepatocytes - ") %>%
+  unlist()
+rowData(tcdd)$is_zonal <- rownames(tcdd) %in% zone.mat
+```
+
+```{r}
+data("tcdd", package = "condimentsPaper")
+```
+
+# EDA
+
+The data is imported using a function from the package. We then compute reduced dimension coordinates with UMAP [@Becht2019, @McInnes2018].
+
+```{r}
+df <- bind_cols(
+  as.data.frame(reducedDims(tcdd)$UMAP),
+  as.data.frame(colData(tcdd)))
+p1 <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = treatment)) +
+  geom_point(size = .7) +
+  scale_color_brewer(palette = "Accent") +
+  labs(col = "Treatment")
+p2 <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, fill = celltype)) +
+  geom_point(size = 1, alpha = .65, col = "grey70", shape = 21) +
+  scale_fill_manual(values = pal) +
+  labs(fill = "Cell Type")
+p1
+p2
+```
+
+```{r}
+tcdd <- imbalance_score(tcdd, dimred = "UMAP", conditions = "treatment", smooth = 5)
+df$scores <- tcdd$scores$scaled_scores
+p3 <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = scores)) +
+  geom_point(size = .7) +
+  scale_color_viridis_c(option = "C") +
+  labs(col = "Score")
+p3
+```
+
+# Differential Topology
+
+To estimate the trajectory, we use _slingshot_ [@Street2018a].
+
+```{r}
+sds <- slingshot(reducedDim(tcdd, "UMAP"),
+                 clusterLabels = tcdd$celltype,
+                 start.clus = "Central",
+                 end.clus  = "Portal")
+```
+
+```{r}
+set.seed(9764)
+topologyTest(sds, tcdd$treatment, rep = 100, methods = "KS_mean", threshs = .01)
+```
+
+```{r}
+rownames(df) <- colnames(tcdd)
+pst <- data.frame(cells = rownames(sds@reducedDim),
+                  pst = slingPseudotime(sds)[, 1])
+df$cells <- rownames(df)
+df <- dplyr::full_join(df, pst)
+p4 <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = pst)) +
+  geom_point(size = .7) +
+  scale_color_viridis_c() +
+  labs(col = "Pseudotime") +
+  geom_path(data = sds@curves$curve1$s[sds@curves$curve1$ord, ] %>%
+              as.data.frame() %>%
+              dplyr::mutate(X = UMAP_1, Y = UMAP_2),
+            col = "black", size = 1.5)
+p4
+```
+
+# Differential Progression
+
+```{r}
+p5 <- ggplot(df, aes(x = pst)) +
+  geom_density(alpha = .8, aes(fill = treatment), col = "transparent") +
+  geom_density(aes(col = treatment), fill = "transparent", size = 1.5) +
+  guides(col = FALSE, 
+         fill = guide_legend(
+             override.aes = list(size = 1.5,
+                                 col = c("#7FC97F", "#BEAED4"),
+                                title.position = "top")
+         )) +
+  scale_fill_brewer(palette = "Accent") +
+  scale_color_brewer(palette = "Accent") +
+  labs(x = "Pseudotime", fill = "Treatment")
+p5
+```
+
+```{r}
+progressionTest(sds, conditions = tcdd$treatment)
+```
+
+# Differential Expression
+
+We use _tradeSeq_ [@VandenBerge2020].
+
+```{r}
+filter <- apply(counts(tcdd), 1, function(g) {
+    sum(g >= 3) >= 10
+})
+tcdd <- tcdd[filter, ]
+```
+
+```{r, eval = FALSE}
+set.seed(3)
+library(BiocParallel)
+BPPARAM <- bpparam()
+BPPARAM$workers <- 5
+BPPARAM$progressbar <- TRUE
+icMat <- evaluateK(counts = as.matrix(assays(tcdd)$counts),
+                   pseudotime = slingPseudotime(sds),
+                   cellWeights = rep(1, ncol(tcdd)),
+                   conditions = factor(tcdd$treatment),
+                   nGenes = 300,
+                   k = 3:7, parallel = TRUE,
+                   BPPARAM = BPPARAM)
+set.seed(3)
+tcdd@int_metadata$slingshot <- sds
+tcdd <- fitGAM(counts = tcdd,
+              conditions = factor(tcdd$treatment),
+              nknots = 7,
+              verbose = TRUE, 
+              parallel = TRUE)
+```
+
+## Assessing Differential Expression Accross conditions
+
+```{r}
+condRes <- conditionTest(tcdd, l2fc = log2(2))
+condRes$padj <- p.adjust(condRes$pvalue, "fdr")
+mean(condRes$padj <= 0.05, na.rm = TRUE)
+sum(condRes$padj <= 0.05, na.rm = TRUE)
+conditionGenes <- rownames(condRes)[condRes$padj <= 0.05]
+conditionGenes <- conditionGenes[!is.na(conditionGenes)]
+scales <- brewer.pal(3, "Accent")[1:2]
+oo <- order(condRes$waldStat, decreasing = TRUE)
+
+# most significant gene
+p1 <- plotSmoothers(tcdd, assays(tcdd)$counts,
+                    gene = rownames(assays(tcdd)$counts)[oo[1]],
+                    alpha = 1, border = TRUE, curvesCols = scales) +
+  scale_color_manual(values = scales) +
+  ggtitle(rownames(assays(tcdd)$counts)[oo[1]])
+# second most significant gene
+p2 <- plotSmoothers(tcdd, assays(tcdd)$counts,
+                    gene = rownames(assays(tcdd)$counts)[oo[2]],
+                    alpha = 1, border = TRUE, curvesCols = scales) +
+  scale_color_manual(values = scales) +
+  ggtitle(rownames(assays(tcdd)$counts)[oo[2]])
+# least significant gene
+p3 <- plotSmoothers(tcdd, assays(tcdd)$counts,
+                    gene = rownames(assays(tcdd)$counts)[oo[nrow(tcdd)]],
+                    alpha = 1, border = TRUE, curvesCols = scales) +
+  scale_color_manual(values = scales) +
+  ggtitle(rownames(assays(tcdd)$counts)[oo[nrow(tcdd)]])
+p1
+p2
+p3
+```
+
+```{r}
+### based on mean smoother
+yhatSmooth <- predictSmooth(tcdd, gene = conditionGenes, nPoints = 50, tidy = FALSE) %>%
+  log1p()
+yhatSmoothScaled <- t(apply(yhatSmooth,1, scales::rescale))
+heatSmooth_TCDD <- pheatmap(yhatSmoothScaled[, 51:100],
+  cluster_cols = FALSE,
+  show_rownames = FALSE, show_colnames = FALSE, main = "TCDD", legend = FALSE,
+  silent = TRUE
+)
+
+matchingHeatmap_control <- pheatmap(yhatSmoothScaled[heatSmooth_TCDD$tree_row$order, 1:50],
+  cluster_cols = FALSE, cluster_rows = FALSE,
+  show_rownames = FALSE, show_colnames = FALSE, main = "Control",
+  legend = FALSE, silent = TRUE 
+)
+
+p4 <- plot_grid(heatSmooth_TCDD[[4]], matchingHeatmap_control[[4]], ncol = 2)
+p4
+```
+
+```{r}
+kept <- rownames(tcdd)[rowData(tcdd)$is_zonal]
+mat <- matrix(c(sum(kept %in% conditionGenes), length(conditionGenes),
+                sum(kept %in% rownames(tcdd)[!rownames(tcdd) %in% conditionGenes]),
+                nrow(tcdd) - length(conditionGenes)),
+              byrow = FALSE, ncol = 2)
+fisher.test(mat)
+```
+
+# Session info 
+
+```{r}
+sessionInfo()
+```
+
+# References
