@@ -1,0 +1,108 @@
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' This dataset contains all the information used for the TGFB case studies
+#'
+#' #' @references
+#' Jos\'{e}  L.  McFaline-Figueroa,  Andrew  J.  Hill,  Xiaojie  Qiu,
+#' Dana  Jackson,  Jay  Shendure,  and  Cole Trapnell.
+#' *A pooled single-cell genetic screen identifies regulatory checkpoints in *
+#' *the continuum of the epithelial-to-mesenchymal transition.*
+#' Nature Genetics, 51(9):1389–1398, sep 2019.  ISSN 15461718.
+#' doi:  10.1038/s41588-019-0489-5.
+#' @source
+#' See the TGFB vignette to generate this data
+#' @usage data(tgfb)
+"tgfb"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' This dataset contains all the information used for the TCDD case studies
+#'
+#' @references
+#' Rance Nault,  Kelly A. Fader,  Sudin Bhattacharya,  and Tim R. Zacharewski.
+#' *Single-Nuclei RNA Sequencing Assessment of the Hepatic Effects of*
+#' * 2,3,7,8-Tetrachlorodibenzo-p-dioxin.CMGH*,
+#' 11(1):147–159, jan 2021.  ISSN 2352345X.
+#' doi:  10.1016/j.jcmgh.2020.07.012.
+#' @source
+#' See the TCDD vignette to generate this data
+#' @usage data(tcdd)
+"tcdd"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' This dataset contains all the information used for the KRAS case studies
+#'
+#' @references
+#' Jenny Y. Xue, Yulei Zhao, Jordan Aronowitz, Trang T. Mai, Alberto Vides,
+#' Besnik Qeriqi, Dongsung Kim, Chuanchuan Li, Elisa de Stanchina, Linas Mazutis,
+#'  Davide Risso, and Piro Lito.
+#' *Rapid non-uniform adaptation to conformation-specific KRAS(G12C) inhibition.*
+#' Nature, 577(7790):421–425,jan  2020. ISSN  14764687. doi: 10.1038/s41586-019-1884-x
+#' @source
+#' See the KRAS vignette to generate this data
+#' @usage data(kras)
+"kras"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' This dataset contains all the results from the simulation on the datasets
+#' with one bifurcation and two conditions
+#'
+#' @source
+#' Output of the simulations
+#' @usage data(fork)
+#' @format Results on 2000 datasets
+"fork"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' This dataset contains all the results from the simulation on the datasets
+#' with two bifurcation and two conditions
+#'
+#' @source
+#' Output of the simulations
+#' @usage data(tree)
+#' @format Results on 2000 datasets
+"tree"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' This dataset contains all the results from the simulation on the datasets
+#' with one bifurcation and three conditions
+#'
+#' @source
+#' Output of the simulations
+#' @usage data(complex)
+#' @format Results on 900 datasets
+"complex"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' Simulated dataset with one bifurcation and two conditions
+#'
+#' @source
+#' Created by running "fork_sce <- create_bifurcating_simu(multiplier = .5)"
+#' @usage data(fork_sce)
+#' @format A \link{\code{SingleCellExperiment}} object
+"fork_sce"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' Simulated dataset with two bifurcation and two conditions
+#'
+#' @source
+#' Created by running "tree_sce <- create_consecutive_bifurcating_simu(multiplier = .5)"
+#' @usage data(tree_sce)
+#' @format A \link{\code{SingleCellExperiment}} object
+"tree_sce"
+
+#' A \link{\code{SingleCellExperiment}} object
+#'
+#' Simulated dataset with one bifurcation and three conditions
+#'
+#' @source
+#' Created by running "fork_sce <- create_bifurcating_three_conditions_simu(multiplier = .5)"
+#' @usage data(complex_sce)
+#' @format A \link{\code{SingleCellExperiment}} object
+"complex_sce"
