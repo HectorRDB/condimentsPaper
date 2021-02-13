@@ -1,0 +1,14 @@
+pandoc: '2.5'
+pkgdown: 1.5.1
+pkgdown_sha: ~
+articles:
+  Examples: Examples.html
+  KRAS: KRAS.html
+  Simulations: Simulations.html
+  TCDD: TCDD.html
+  TGFB: TGFB.html
+last_built: 2021-02-13T03:33Z
+urls:
+  reference: http://hectorrdb.github.io//condimentspPaper/reference
+  article: http://hectorrdb.github.io//condimentspPaper/articles
+
