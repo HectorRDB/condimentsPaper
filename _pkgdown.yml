@@ -1,18 +1,18 @@
-url: https://hectorrb.github.io/condimentspPaper
+url: http://hectorrdb.github.io//condimentspPaper
 
 template:
   params:
     bootswatch: flatly
 
 home:
-  title: "Code to reproduce the condiments Paper"
+  title: "condiments Paper"
   type: inverse
 
 
 navbar:
   right:
    - icon: fa-github
-     href: https://github.com/hectorrb/condimentsPaper
+     href: https://github.com/HectorRDB/condimentsPaper
 
 reference:
   - title: "Download the datasets for the case studies"
