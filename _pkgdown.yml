@@ -1,0 +1,59 @@
+url: https://hectorrb.github.io/condimentspPaper
+
+template:
+  params:
+    bootswatch: flatly
+
+home:
+  title: "Code to reproduce the condiments Paper"
+  type: inverse
+
+
+navbar:
+  right:
+   - icon: fa-github
+     href: https://github.com/hectorrb/condimentsPaper
+
+reference:
+  - title: "Download the datasets for the case studies"
+    desc: >
+      Those three functions obtain the dataset and metadata (mostly from GEO) 
+      and format them for analysis.
+    contents:
+      - '`import_KRAS`'
+      - '`import_TCDD`'
+      - '`import_TGFB`'
+  - title: "Case study datasets"
+    desc: >
+      The formatted datasets used in the simulations
+    contents:
+      - '`kras`'
+      - '`tcdd`'
+      - '`tgfb`'
+  - title: "Simulations"
+    desc: >
+      All functions needed to run or analyze the simulations
+    contents:
+      - '`all_metrics`'
+      - '`anayze_all`'
+      - '`anayze_multiple_conditions`'
+      - '`clean_results`'
+      - '`create_bifurcating_simu`'
+      - '`create_bifurcating_three_conditions_simu`'
+      - '`create_consecutive_bifurcating_simu`'
+  - title: 'Visualization'
+    desc: "Functions to plot the results"
+    contents:
+      - '`plot_backbone_modulenet_simplify`'
+      - '`plot_example`'
+      - '`plot_reduced_dim`'
+      - '`plot_reduced_dim_together`'
+  - title: 'Simulation data'
+    desc: "The simulation results and examples"
+    contents:
+      - '`complex`'
+      - '`complex_sce`'
+      - '`fork`'
+      - '`fork_sce`'
+      - '`tree`'
+      - '`tree_sce`'

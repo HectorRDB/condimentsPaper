@@ -16,8 +16,11 @@ vignette: >
 library(knitr)
 opts_chunk$set(
   fig.pos = "!h", out.extra = "", warning = F, message = F, 
-  fig.align = "center", fig.height = 4, fig.width = 4
+  fig.align = "center", fig.height = 7, fig.width = 7
 )
+```
+
+```{r}
 libs <- c("dplyr","tidyr", "ggplot2", "condiments", "cowplot", "condimentsPaper")
 suppressMessages(
   suppressWarnings(sapply(libs, require, character.only = TRUE))

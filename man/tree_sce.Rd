@@ -3,7 +3,7 @@
 \docType{data}
 \name{tree_sce}
 \alias{tree_sce}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{A \link{\code{SingleCellExperiment}} example of a two bifurcations and two conditions dataset}
 \format{
 A \link{\code{SingleCellExperiment}} object
 }
@@ -14,6 +14,6 @@ Created by running "tree_sce <- create_consecutive_bifurcating_simu(multiplier =
 data(tree_sce)
 }
 \description{
-Simulated dataset with two bifurcation and two conditions
+Simulated dataset with two bifurcations and two conditions
 }
 \keyword{datasets}

@@ -44,7 +44,7 @@
 #' @usage data(kras)
 "kras"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' Results on the one bifurcation and two conditions datasets
 #'
 #' This dataset contains all the results from the simulation on the datasets
 #' with one bifurcation and two conditions
@@ -55,10 +55,10 @@
 #' @format Results on 2000 datasets
 "fork"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' Results on the two bifurcations and two conditions datasets
 #'
 #' This dataset contains all the results from the simulation on the datasets
-#' with two bifurcation and two conditions
+#' with two bifurcations and two conditions
 #'
 #' @source
 #' Output of the simulations
@@ -66,7 +66,7 @@
 #' @format Results on 2000 datasets
 "tree"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' Results on the one bifurcation and three conditions datasets
 #'
 #' This dataset contains all the results from the simulation on the datasets
 #' with one bifurcation and three conditions
@@ -77,7 +77,7 @@
 #' @format Results on 900 datasets
 "complex"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' A \link{\code{SingleCellExperiment}} example of a one bifurcation and two conditions dataset
 #'
 #' Simulated dataset with one bifurcation and two conditions
 #'
@@ -87,9 +87,9 @@
 #' @format A \link{\code{SingleCellExperiment}} object
 "fork_sce"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' A \link{\code{SingleCellExperiment}} example of a two bifurcations and two conditions dataset
 #'
-#' Simulated dataset with two bifurcation and two conditions
+#' Simulated dataset with two bifurcations and two conditions
 #'
 #' @source
 #' Created by running "tree_sce <- create_consecutive_bifurcating_simu(multiplier = .5)"
@@ -97,7 +97,7 @@
 #' @format A \link{\code{SingleCellExperiment}} object
 "tree_sce"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' A \link{\code{SingleCellExperiment}} example of a one bifurcation and three conditions dataset
 #'
 #' Simulated dataset with one bifurcation and three conditions
 #'

@@ -3,7 +3,7 @@
 \docType{data}
 \name{complex_sce}
 \alias{complex_sce}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{A \link{\code{SingleCellExperiment}} example of a one bifurcation and three conditions dataset}
 \format{
 A \link{\code{SingleCellExperiment}} object
 }

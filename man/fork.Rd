@@ -3,7 +3,7 @@
 \docType{data}
 \name{fork}
 \alias{fork}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{Results on the one bifurcation and two conditions datasets}
 \format{
 Results on 2000 datasets
 }

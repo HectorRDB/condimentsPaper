@@ -3,7 +3,7 @@
 \docType{data}
 \name{complex}
 \alias{complex}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{Results on the one bifurcation and three conditions datasets}
 \format{
 Results on 900 datasets
 }

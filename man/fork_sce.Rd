@@ -3,7 +3,7 @@
 \docType{data}
 \name{fork_sce}
 \alias{fork_sce}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{A \link{\code{SingleCellExperiment}} example of a one bifurcation and two conditions dataset}
 \format{
 A \link{\code{SingleCellExperiment}} object
 }

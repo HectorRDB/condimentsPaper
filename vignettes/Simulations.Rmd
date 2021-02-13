@@ -23,7 +23,7 @@ opts_chunk$set(
 
 ```{r}
 libs <- c("here", "dplyr", "stringr", "tidyr", "SingleCellExperiment", "slingshot",
-          "condiments", "cowplot", "dyngen", "ggplot2")
+          "condiments", "cowplot", "dyngen", "ggplot2", "condimentsPaper")
 suppressMessages(
   suppressWarnings(sapply(libs, require, character.only = TRUE))
 )
@@ -304,3 +304,5 @@ ggplot(complex, aes(x = as.numeric(factor(multiplier, levels = unique(multiplier
        y = "adjusted p-value", col = "Test", fill = "Test") +
   theme(legend.position = "bottom")
 ```
+
+# References 

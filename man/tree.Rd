@@ -3,7 +3,7 @@
 \docType{data}
 \name{tree}
 \alias{tree}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{Results on the two bifurcations and two conditions datasets}
 \format{
 Results on 2000 datasets
 }
@@ -15,6 +15,6 @@ data(tree)
 }
 \description{
 This dataset contains all the results from the simulation on the datasets
-with two bifurcation and two conditions
+with two bifurcations and two conditions
 }
 \keyword{datasets}
