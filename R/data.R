@@ -1,4 +1,4 @@
-#' A \link{\code{SingleCellExperiment}} object
+#' A \link[SingleCellExperiment]{SingleCellExperiment} object
 #'
 #' This dataset contains all the information used for the TGFB case studies
 #'
@@ -14,7 +14,7 @@
 #' @usage data(tgfb)
 "tgfb"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' A \link[SingleCellExperiment]{SingleCellExperiment} object
 #'
 #' This dataset contains all the information used for the TCDD case studies
 #'
@@ -29,7 +29,7 @@
 #' @usage data(tcdd)
 "tcdd"
 
-#' A \link{\code{SingleCellExperiment}} object
+#' A \link[SingleCellExperiment]{SingleCellExperiment} object
 #'
 #' This dataset contains all the information used for the KRAS case studies
 #'
@@ -77,32 +77,32 @@
 #' @format Results on 900 datasets
 "complex"
 
-#' A \link{\code{SingleCellExperiment}} example of a one bifurcation and two conditions dataset
+#' A \link[SingleCellExperiment]{SingleCellExperiment} example of a one bifurcation and two conditions dataset
 #'
 #' Simulated dataset with one bifurcation and two conditions
 #'
 #' @source
 #' Created by running "fork_sce <- create_bifurcating_simu(multiplier = .5)"
 #' @usage data(fork_sce)
-#' @format A \link{\code{SingleCellExperiment}} object
+#' @format A \link[SingleCellExperiment]{SingleCellExperiment} object
 "fork_sce"
 
-#' A \link{\code{SingleCellExperiment}} example of a two bifurcations and two conditions dataset
+#' A \link[SingleCellExperiment]{SingleCellExperiment} example of a two bifurcations and two conditions dataset
 #'
 #' Simulated dataset with two bifurcations and two conditions
 #'
 #' @source
 #' Created by running "tree_sce <- create_consecutive_bifurcating_simu(multiplier = .5)"
 #' @usage data(tree_sce)
-#' @format A \link{\code{SingleCellExperiment}} object
+#' @format A \link[SingleCellExperiment]{SingleCellExperiment} object
 "tree_sce"
 
-#' A \link{\code{SingleCellExperiment}} example of a one bifurcation and three conditions dataset
+#' A \link[SingleCellExperiment]{SingleCellExperiment} example of a one bifurcation and three conditions dataset
 #'
 #' Simulated dataset with one bifurcation and three conditions
 #'
 #' @source
 #' Created by running "fork_sce <- create_bifurcating_three_conditions_simu(multiplier = .5)"
 #' @usage data(complex_sce)
-#' @format A \link{\code{SingleCellExperiment}} object
+#' @format A \link[SingleCellExperiment]{SingleCellExperiment} object
 "complex_sce"

@@ -3,7 +3,7 @@
 \docType{data}
 \name{kras}
 \alias{kras}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{A \link[SingleCellExperiment]{SingleCellExperiment} object}
 \format{
 An object of class \code{SingleCellExperiment} with 4788 rows and 10177 columns.
 }

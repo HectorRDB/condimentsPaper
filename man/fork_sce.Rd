@@ -3,9 +3,9 @@
 \docType{data}
 \name{fork_sce}
 \alias{fork_sce}
-\title{A \link{\code{SingleCellExperiment}} example of a one bifurcation and two conditions dataset}
+\title{A \link[SingleCellExperiment]{SingleCellExperiment} example of a one bifurcation and two conditions dataset}
 \format{
-A \link{\code{SingleCellExperiment}} object
+A \link[SingleCellExperiment]{SingleCellExperiment} object
 }
 \source{
 Created by running "fork_sce <- create_bifurcating_simu(multiplier = .5)"

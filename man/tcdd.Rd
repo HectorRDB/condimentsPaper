@@ -3,7 +3,7 @@
 \docType{data}
 \name{tcdd}
 \alias{tcdd}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{A \link[SingleCellExperiment]{SingleCellExperiment} object}
 \format{
 An object of class \code{SingleCellExperiment} with 8027 rows and 9951 columns.
 }

@@ -139,6 +139,32 @@ p4 <- p4 +
 p4
 ```
 
+```{r}
+p <- ggplot(df, aes(x = tSNE1, y = tSNE2, col = Batch)) +
+  geom_point(size = .7, alpha = .1) +
+  scale_color_brewer(palette = "Accent")
+cls <- df %>% group_by(Cluster, Batch) %>%
+  dplyr::summarise(tSNE1 = mean(tSNE1), tSNE2 = mean(tSNE2), .groups = NULL)
+p <- p +
+  geom_point(data = cls, size = 3)
+edges <- lapply(sds@lineages, function(lin) {
+  from <- lin[1:(length(lin) - 1)]
+  to <- lin[2:length(lin)]
+  return(data.frame("from" = from, "to" = to))
+}) %>% bind_rows()
+for (batch in unique(kras$Batch)) {
+  cl_batch <- cls %>% filter(Batch == batch)
+  edges_batch <- left_join(edges, cl_batch, by = c("from" = "Cluster")) %>%
+    left_join(cl_batch %>% dplyr::rename("tSNE1_end" = "tSNE1",
+                                  "tSNE2_end" = "tSNE2") %>%
+                select(-Batch), by = c("to" = "Cluster") )
+    p <- p +
+     geom_segment(data = edges_batch, aes(xend = tSNE1_end, yend = tSNE2_end),
+                  size = 2)
+}
+p
+```
+
 # Differential Progression
 ## Test
 

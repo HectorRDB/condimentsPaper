@@ -3,7 +3,7 @@
 \docType{data}
 \name{tgfb}
 \alias{tgfb}
-\title{A \link{\code{SingleCellExperiment}} object}
+\title{A \link[SingleCellExperiment]{SingleCellExperiment} object}
 \format{
 An object of class \code{SingleCellExperiment} with 10549 rows and 9268 columns.
 }

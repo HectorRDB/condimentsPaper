@@ -3,9 +3,9 @@
 \docType{data}
 \name{tree_sce}
 \alias{tree_sce}
-\title{A \link{\code{SingleCellExperiment}} example of a two bifurcations and two conditions dataset}
+\title{A \link[SingleCellExperiment]{SingleCellExperiment} example of a two bifurcations and two conditions dataset}
 \format{
-A \link{\code{SingleCellExperiment}} object
+A \link[SingleCellExperiment]{SingleCellExperiment} object
 }
 \source{
 Created by running "tree_sce <- create_consecutive_bifurcating_simu(multiplier = .5)"
