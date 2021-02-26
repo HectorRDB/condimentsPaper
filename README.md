@@ -1,3 +1,5 @@
+<a href='https://hectorrdb.github.io/condiments'><img src='vignettes/sticker.png' align="right" height="138.5"/></a>
+
 # condimentsPaper
 
 This repository is made to host a reproducible version of the condiments paper. Some of the functions can take a long time to 
@@ -12,7 +14,6 @@ There are 5 vignettes that follow along the paper
 # Examples
 
 [The first vignette](https://hectorrdb.github.io/condimentsPaper//articles/Examples.html) is a list of all examples used in Figure 1 of the manuscript
-
 
 # Simulation
 
