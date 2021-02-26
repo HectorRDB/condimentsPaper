@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -74,7 +74,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/HectorRDB/condimentsPaper">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
@@ -88,7 +88,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="KRAS_files/header-attrs-2.7/header-attrs.js"></script><script src="KRAS_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analysis of the KRAS datataset</h1>
@@ -106,12 +106,13 @@
 <h1 class="hasAnchor">
 <a href="#load-data" class="anchor"></a>Load data</h1>
 <p>The dataset we will be working with concerns a single-cell RNA-sequencing dataset consisting of three cancer models under a KRAS(G12C) inhibition <span class="citation">(Xue et al. 2020)</span>.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">libs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"here"</span>, <span class="st">"dplyr"</span>, <span class="st">"tradeSeq"</span>, <span class="st">"SingleCellExperiment"</span>, <span class="st">"slingshot"</span>,
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">libs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"here"</span>, <span class="st">"dplyr"</span>, <span class="st">"tradeSeq"</span>, <span class="st">"SingleCellExperiment"</span>, <span class="st">"slingshot"</span>,
            <span class="st">"condiments"</span>, <span class="st">"scater"</span>, <span class="st">"RColorBrewer"</span>, <span class="st">"pheatmap"</span>, <span class="st">"cowplot"</span>,
-          <span class="st">"tidyr"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressMessages</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">libs</span>, <span class="no">require</span>, <span class="kw">character.only</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
-)</pre></body></html></div>
+          <span class="st">"tidyr"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressMessages</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">libs</span>, <span class="va">require</span>, character.only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
 <pre><code>##                 here                dplyr             tradeSeq 
 ##                 TRUE                 TRUE                 TRUE 
 ## SingleCellExperiment            slingshot           condiments 
@@ -120,45 +121,51 @@
 ##                 TRUE                 TRUE                 TRUE 
 ##              cowplot                tidyr 
 ##                 TRUE                 TRUE</code></pre>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/rm.html">rm</a></span>(<span class="no">libs</span>)
-<span class="fu">theme_set</span>(<span class="fu">theme_classic</span>())</pre></body></html></div>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">kras</span> <span class="kw">&lt;-</span> <span class="kw pkg">condimentsPaper</span><span class="kw ns">::</span><span class="fu"><a href="../reference/import_KRAS.html">import_KRAS</a></span>()</pre></body></html></div>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"kras"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"condimentsPaper"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html">rm</a></span><span class="op">(</span><span class="va">libs</span><span class="op">)</span>
+<span class="fu">theme_set</span><span class="op">(</span><span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">kras</span> <span class="op">&lt;-</span> <span class="fu">condimentsPaper</span><span class="fu">::</span><span class="fu"><a href="../reference/import_KRAS.html">import_KRAS</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"kras"</span>, package <span class="op">=</span> <span class="st">"condimentsPaper"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="eda" class="section level1">
 <h1 class="hasAnchor">
 <a href="#eda" class="anchor"></a>EDA</h1>
 <p>Reduced dimension coordinates are obtained from the original publication.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">cols</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu">brewer.pal</span>(<span class="fl">5</span>, <span class="st">"Blues"</span>)[<span class="fl">2</span>:<span class="fl">5</span>], <span class="fu">brewer.pal</span>(<span class="fl">3</span>, <span class="st">"Greens"</span>)[<span class="fl">2</span>:<span class="fl">3</span>], <span class="fu">brewer.pal</span>(<span class="fl">3</span>, <span class="st">"Reds"</span>)[<span class="fl">2</span>:<span class="fl">3</span>],
-          <span class="fu">brewer.pal</span>(<span class="fl">3</span>, <span class="st">"Oranges"</span>)[<span class="fl">2</span>], <span class="st">"Grey"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">cols</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">8</span>, <span class="fl">2</span>, <span class="fl">9</span>, <span class="fl">10</span>, <span class="fl">6</span>, <span class="fl">7</span>)
-<span class="no">kras</span>$<span class="no">Cluster</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">kras</span>$<span class="no">Cluster</span>)
-<span class="fu">reducedDim</span>(<span class="no">kras</span>, <span class="st">"TSNE"</span>) <span class="kw">&lt;-</span> <span class="fu">colData</span>(<span class="no">kras</span>)[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tSNE1"</span>, <span class="st">"tSNE2"</span>)] <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>()
-<span class="no">df</span> <span class="kw">&lt;-</span> <span class="fu">colData</span>(<span class="no">kras</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu">sample_frac</span>(<span class="fl">1</span>)
-<span class="no">p1</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">tSNE1</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">tSNE2</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="no">Batch</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">.7</span>) +
-  <span class="fu">scale_color_brewer</span>(<span class="kw">palette</span> <span class="kw">=</span> <span class="st">"Accent"</span>) +
-  <span class="fu">labs</span>(<span class="kw">col</span> <span class="kw">=</span> <span class="st">"Type"</span>)
-<span class="no">p1</span></pre></body></html></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">5</span>, <span class="st">"Blues"</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">3</span>, <span class="st">"Greens"</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, <span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">3</span>, <span class="st">"Reds"</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,
+          <span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">3</span>, <span class="st">"Oranges"</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="st">"Grey"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">8</span>, <span class="fl">2</span>, <span class="fl">9</span>, <span class="fl">10</span>, <span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span>
+<span class="va">kras</span><span class="op">$</span><span class="va">Cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">kras</span><span class="op">$</span><span class="va">Cluster</span><span class="op">)</span>
+<span class="fu">reducedDim</span><span class="op">(</span><span class="va">kras</span>, <span class="st">"TSNE"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tSNE1"</span>, <span class="st">"tSNE2"</span><span class="op">)</span><span class="op">]</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">sample_frac</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">tSNE1</span>, y <span class="op">=</span> <span class="va">tSNE2</span>, col <span class="op">=</span> <span class="va">Batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.7</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>col <span class="op">=</span> <span class="st">"Type"</span><span class="op">)</span>
+<span class="va">p1</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-4-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">p2</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">tSNE1</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">tSNE2</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="no">Cluster</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">.65</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="st">"grey70"</span>, <span class="kw">shape</span> <span class="kw">=</span> <span class="fl">21</span>) +
-  <span class="fu">scale_fill_manual</span>(<span class="kw">values</span> <span class="kw">=</span> <span class="no">cols</span>) +
-  <span class="fu">labs</span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="st">"Cell Clusters"</span>)
-<span class="no">p2</span></pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">tSNE1</span>, y <span class="op">=</span> <span class="va">tSNE2</span>, fill <span class="op">=</span> <span class="va">Cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">.65</span>, col <span class="op">=</span> <span class="st">"grey70"</span>, shape <span class="op">=</span> <span class="fl">21</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Cell Clusters"</span><span class="op">)</span>
+<span class="va">p2</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-4-2.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div id="imbalance-score" class="section level1">
 <h1 class="hasAnchor">
 <a href="#imbalance-score" class="anchor"></a>Imbalance score</h1>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">kras</span> <span class="kw">&lt;-</span> <span class="fu">imbalance_score</span>(<span class="kw">Object</span> <span class="kw">=</span> <span class="no">kras</span>, <span class="kw">conditions</span> <span class="kw">=</span> <span class="st">"Batch"</span>, <span class="kw">dimred</span> <span class="kw">=</span> <span class="st">"TSNE"</span>)
-<span class="no">df</span>$<span class="no">scores</span> <span class="kw">&lt;-</span> <span class="no">kras</span>[, <span class="no">df</span>$<span class="no">X1</span>]$<span class="no">scores</span>$<span class="no">scaled_scores</span>
-<span class="no">p3</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">tSNE1</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">tSNE2</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="no">scores</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">.7</span>) +
-  <span class="fu">scale_color_viridis_c</span>(<span class="kw">option</span> <span class="kw">=</span> <span class="st">"C"</span>) +
-  <span class="fu">labs</span>(<span class="kw">col</span> <span class="kw">=</span> <span class="st">"Score"</span>)
-<span class="no">p3</span></pre></body></html></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">kras</span> <span class="op">&lt;-</span> <span class="fu">imbalance_score</span><span class="op">(</span>Object <span class="op">=</span> <span class="va">kras</span>, conditions <span class="op">=</span> <span class="st">"Batch"</span>, dimred <span class="op">=</span> <span class="st">"TSNE"</span><span class="op">)</span>
+<span class="va">df</span><span class="op">$</span><span class="va">scores</span> <span class="op">&lt;-</span> <span class="va">kras</span><span class="op">[</span>, <span class="va">df</span><span class="op">$</span><span class="va">X1</span><span class="op">]</span><span class="op">$</span><span class="va">scores</span><span class="op">$</span><span class="va">scaled_scores</span>
+<span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">tSNE1</span>, y <span class="op">=</span> <span class="va">tSNE2</span>, col <span class="op">=</span> <span class="va">scores</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.7</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_viridis_c</span><span class="op">(</span>option <span class="op">=</span> <span class="st">"C"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>col <span class="op">=</span> <span class="st">"Score"</span><span class="op">)</span>
+<span class="va">p3</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-5-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div id="differential-topology" class="section level1">
@@ -168,84 +175,91 @@
 <div id="fit-slingshot" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fit-slingshot" class="anchor"></a>Fit slingshot</h2>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">kras</span> <span class="kw">&lt;-</span> <span class="fu">slingshot</span>(<span class="no">kras</span>, <span class="kw">reducedDim</span> <span class="kw">=</span> <span class="st">"TSNE"</span>, <span class="kw">clusterLabels</span> <span class="kw">=</span> <span class="no">kras</span>$<span class="no">Cluster</span>,
-                 <span class="kw">start.clus</span> <span class="kw">=</span> <span class="fl">7</span>, <span class="kw">extend</span> <span class="kw">=</span> <span class="st">"n"</span>, <span class="kw">reweight</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">reassign</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">kras</span> <span class="op">&lt;-</span> <span class="fu">slingshot</span><span class="op">(</span><span class="va">kras</span>, reducedDim <span class="op">=</span> <span class="st">"TSNE"</span>, clusterLabels <span class="op">=</span> <span class="va">kras</span><span class="op">$</span><span class="va">Cluster</span>,
+                 start.clus <span class="op">=</span> <span class="fl">7</span>, extend <span class="op">=</span> <span class="st">"n"</span>, reweight <span class="op">=</span> <span class="cn">FALSE</span>, reassign <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <pre><code>## Using full covariance matrix</code></pre>
 </div>
 <div id="topology-test" class="section level2">
 <h2 class="hasAnchor">
 <a href="#topology-test" class="anchor"></a>Topology Test</h2>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu">topologyTest</span>(<span class="no">kras</span>, <span class="kw">conditions</span> <span class="kw">=</span> <span class="st">"Batch"</span>, <span class="kw">rep</span> <span class="kw">=</span> <span class="fl">50</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">topologyTest</span><span class="op">(</span><span class="va">kras</span>, conditions <span class="op">=</span> <span class="st">"Batch"</span>, rep <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></code></pre></div>
 <pre><code>## Generating permuted trajectories</code></pre>
 <pre><code>## Running Classifier test</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
 <pre><code>##       method thresh statistic p.value
-## 1 Classifier   0.05 0.8934982       0</code></pre>
+## 1 Classifier   0.01 0.9176122       0</code></pre>
 </div>
 <div id="individual-curves" class="section level2">
 <h2 class="hasAnchor">
 <a href="#individual-curves" class="anchor"></a>Individual curves</h2>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">sdss</span> <span class="kw">&lt;-</span> <span class="fu">slingshot_conditions</span>(<span class="no">kras</span>, <span class="no">kras</span>$<span class="no">Batch</span>, <span class="kw">approx_points</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-                             <span class="kw">extend</span> <span class="kw">=</span> <span class="st">"n"</span>, <span class="kw">reweight</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">reassign</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="no">sdss</span>$<span class="no">condition_id</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">sdss</span>)
-<span class="no">sdss</span>$<span class="no">mapping</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="fl">3</span>, <span class="kw">each</span> <span class="kw">=</span> <span class="fl">3</span>), <span class="kw">nrow</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">byrow</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">sds</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">merge_sds</span>, <span class="no">sdss</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span> <span class="fu">select</span>(<span class="no">X1</span>, <span class="no">tSNE1</span>, <span class="no">tSNE2</span>, <span class="no">Cluster</span>, <span class="no">Batch</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">full_join</span>(
-    <span class="fu">slingPseudotime</span>(<span class="no">sds</span>) <span class="kw">%&gt;%</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>() <span class="kw">%&gt;%</span>
-      <span class="fu">mutate</span>(<span class="kw">X1</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">.</span>)) <span class="kw">%&gt;%</span>
-      <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span>(<span class="st">"Lineage1"</span> <span class="kw">=</span> <span class="no">V1</span>, <span class="st">"Lineage2"</span> <span class="kw">=</span> <span class="no">V2</span>, <span class="st">"Lineage3"</span> <span class="kw">=</span> <span class="no">V3</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sdss</span> <span class="op">&lt;-</span> <span class="fu">slingshot_conditions</span><span class="op">(</span><span class="va">kras</span>, <span class="va">kras</span><span class="op">$</span><span class="va">Batch</span>, approx_points <span class="op">=</span> <span class="cn">FALSE</span>,
+                             extend <span class="op">=</span> <span class="st">"n"</span>, reweight <span class="op">=</span> <span class="cn">FALSE</span>, reassign <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">sdss</span><span class="op">$</span><span class="va">condition_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">sdss</span><span class="op">)</span>
+<span class="va">sdss</span><span class="op">$</span><span class="va">mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">sds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">merge_sds</span>, <span class="va">sdss</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">X1</span>, <span class="va">tSNE1</span>, <span class="va">tSNE2</span>, <span class="va">Cluster</span>, <span class="va">Batch</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">full_join</span><span class="op">(</span>
+    <span class="fu">slingPseudotime</span><span class="op">(</span><span class="va">sds</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+      <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+      <span class="fu">mutate</span><span class="op">(</span>X1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span><span class="st">"Lineage1"</span> <span class="op">=</span> <span class="va">V1</span>, <span class="st">"Lineage2"</span> <span class="op">=</span> <span class="va">V2</span>, <span class="st">"Lineage3"</span> <span class="op">=</span> <span class="va">V3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## Joining, by = "X1"</code></pre>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu">pivot_longer</span>(<span class="fu">starts_with</span>(<span class="st">"Lineage"</span>), <span class="kw">names_to</span> <span class="kw">=</span> <span class="st">"Curve"</span>, <span class="kw">values_to</span> <span class="kw">=</span> <span class="st">"pst"</span>)
-<span class="no">p4</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">tSNE1</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">tSNE2</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="no">Batch</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">.7</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">.1</span>) +
-  <span class="fu">scale_color_brewer</span>(<span class="kw">palette</span> <span class="kw">=</span> <span class="st">"Accent"</span>)
-<span class="kw">for</span> (<span class="no">batch</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">kras</span>$<span class="no">Batch</span>)) {
-  <span class="no">sds_cond</span> <span class="kw">&lt;-</span> <span class="no">sdss</span><span class="kw">[[</span><span class="no">batch</span>]]
-  <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fl">3</span>) {
-    <span class="no">p4</span> <span class="kw">&lt;-</span> <span class="no">p4</span> +
-      <span class="fu">geom_path</span>(<span class="kw">data</span> <span class="kw">=</span> <span class="fu">slingCurves</span>(<span class="no">sds_cond</span>)<span class="kw">[[</span><span class="no">i</span>]]$<span class="no">s</span>[<span class="fu">slingCurves</span>(<span class="no">sds_cond</span>)<span class="kw">[[</span><span class="no">i</span>]]$<span class="no">ord</span>, ] <span class="kw">%&gt;%</span>
-                  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>() <span class="kw">%&gt;%</span>
-                  <span class="fu">mutate</span>(<span class="kw">Batch</span> <span class="kw">=</span> <span class="no">batch</span>),
-                <span class="kw">size</span> <span class="kw">=</span> <span class="fl">1.5</span>)
-  }
-}
-<span class="no">position</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(
-  <span class="st">"tSNE1"</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">40</span>, -<span class="fl">30</span>, <span class="fl">45</span>),
-  <span class="st">"tSNE2"</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">50</span>, -<span class="fl">50</span>, -<span class="fl">50</span>),
-  <span class="st">"Batch"</span> <span class="kw">=</span> <span class="st">"H2122A"</span>,
-  <span class="st">"text"</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"Lineage "</span>, <span class="fl">1</span>:<span class="fl">3</span>)
-)
-<span class="no">p4</span> <span class="kw">&lt;-</span> <span class="no">p4</span> +
-  <span class="fu">geom_text</span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">position</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="st">"black"</span>, <span class="fu">aes</span>(<span class="kw">label</span> <span class="kw">=</span> <span class="no">text</span>), <span class="kw">size</span> <span class="kw">=</span> <span class="fl">5</span>)
-<span class="no">p4</span></pre></body></html></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
+  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"Lineage"</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"Curve"</span>, values_to <span class="op">=</span> <span class="st">"pst"</span><span class="op">)</span>
+<span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">tSNE1</span>, y <span class="op">=</span> <span class="va">tSNE2</span>, col <span class="op">=</span> <span class="va">Batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.7</span>, alpha <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">batch</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">kras</span><span class="op">$</span><span class="va">Batch</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">sds_cond</span> <span class="op">&lt;-</span> <span class="va">sdss</span><span class="op">[[</span><span class="va">batch</span><span class="op">]</span><span class="op">]</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">p4</span> <span class="op">&lt;-</span> <span class="va">p4</span> <span class="op">+</span>  
+      <span class="fu">geom_path</span><span class="op">(</span>data <span class="op">=</span> <span class="fu">slingCurves</span><span class="op">(</span><span class="va">sds_cond</span><span class="op">)</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">s</span><span class="op">[</span><span class="fu">slingCurves</span><span class="op">(</span><span class="va">sds_cond</span><span class="op">)</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">ord</span>, <span class="op">]</span> <span class="op">%&gt;%</span>
+                  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+                  <span class="fu">mutate</span><span class="op">(</span>Batch <span class="op">=</span> <span class="va">batch</span><span class="op">)</span>, 
+                size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span>   
+  <span class="op">}</span>
+<span class="op">}</span>
+<span class="va">position</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+  <span class="st">"tSNE1"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="op">-</span><span class="fl">30</span>, <span class="fl">45</span><span class="op">)</span>,
+  <span class="st">"tSNE2"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="op">-</span><span class="fl">50</span>, <span class="op">-</span><span class="fl">50</span><span class="op">)</span>,
+  <span class="st">"Batch"</span> <span class="op">=</span> <span class="st">"H2122A"</span>,
+  <span class="st">"text"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Lineage "</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="va">p4</span> <span class="op">&lt;-</span> <span class="va">p4</span> <span class="op">+</span> 
+  <span class="fu">geom_text</span><span class="op">(</span>data <span class="op">=</span> <span class="va">position</span>, col <span class="op">=</span> <span class="st">"black"</span>, <span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="va">text</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+<span class="va">p4</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-9-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">tSNE1</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">tSNE2</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="no">Batch</span>)) +
-  <span class="fu">geom_point</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">.7</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">.1</span>) +
-  <span class="fu">scale_color_brewer</span>(<span class="kw">palette</span> <span class="kw">=</span> <span class="st">"Accent"</span>)
-<span class="no">cls</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">Cluster</span>, <span class="no">Batch</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw">tSNE1</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">tSNE1</span>), <span class="kw">tSNE2</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">tSNE2</span>), <span class="kw">.groups</span> <span class="kw">=</span> <span class="kw">NULL</span>)</pre></body></html></div>
-<pre><code>## `summarise()` regrouping output by 'Cluster' (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">p</span> +
-  <span class="fu">geom_point</span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cls</span>, <span class="kw">size</span> <span class="kw">=</span> <span class="fl">3</span>)
-<span class="no">edges</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">sds</span>@<span class="kw">lineages</span>, <span class="kw">function</span>(<span class="no">lin</span>) {
-  <span class="no">from</span> <span class="kw">&lt;-</span> <span class="no">lin</span>[<span class="fl">1</span>:(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">lin</span>) - <span class="fl">1</span>)]
-  <span class="no">to</span> <span class="kw">&lt;-</span> <span class="no">lin</span>[<span class="fl">2</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">lin</span>)]
-  <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="st">"from"</span> <span class="kw">=</span> <span class="no">from</span>, <span class="st">"to"</span> <span class="kw">=</span> <span class="no">to</span>))
-}) <span class="kw">%&gt;%</span> <span class="fu">bind_rows</span>()
-<span class="kw">for</span> (<span class="no">batch</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">kras</span>$<span class="no">Batch</span>)) {
-  <span class="no">cl_batch</span> <span class="kw">&lt;-</span> <span class="no">cls</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">Batch</span> <span class="kw">==</span> <span class="no">batch</span>)
-  <span class="no">edges_batch</span> <span class="kw">&lt;-</span> <span class="fu">left_join</span>(<span class="no">edges</span>, <span class="no">cl_batch</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"from"</span> <span class="kw">=</span> <span class="st">"Cluster"</span>)) <span class="kw">%&gt;%</span>
-    <span class="fu">left_join</span>(<span class="no">cl_batch</span> <span class="kw">%&gt;%</span> <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span>(<span class="st">"tSNE1_end"</span> <span class="kw">=</span> <span class="st">"tSNE1"</span>,
-                                  <span class="st">"tSNE2_end"</span> <span class="kw">=</span> <span class="st">"tSNE2"</span>) <span class="kw">%&gt;%</span>
-                <span class="fu">select</span>(-<span class="no">Batch</span>), <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"to"</span> <span class="kw">=</span> <span class="st">"Cluster"</span>) )
-    <span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">p</span> +
-     <span class="fu">geom_segment</span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">edges_batch</span>, <span class="fu">aes</span>(<span class="kw">xend</span> <span class="kw">=</span> <span class="no">tSNE1_end</span>, <span class="kw">yend</span> <span class="kw">=</span> <span class="no">tSNE2_end</span>),
-                  <span class="kw">size</span> <span class="kw">=</span> <span class="fl">2</span>)
-}
-<span class="no">p</span></pre></body></html></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">tSNE1</span>, y <span class="op">=</span> <span class="va">tSNE2</span>, col <span class="op">=</span> <span class="va">Batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.7</span>, alpha <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span>
+<span class="va">cls</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span><span class="op">(</span><span class="va">Cluster</span>, <span class="va">Batch</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>tSNE1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tSNE1</span><span class="op">)</span>, tSNE2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tSNE2</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by 'Cluster'. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">cls</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
+<span class="va">edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">sds</span><span class="op">@</span><span class="va">lineages</span>, <span class="kw">function</span><span class="op">(</span><span class="va">lin</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">from</span> <span class="op">&lt;-</span> <span class="va">lin</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">lin</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
+  <span class="va">to</span> <span class="op">&lt;-</span> <span class="va">lin</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">lin</span><span class="op">)</span><span class="op">]</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"from"</span> <span class="op">=</span> <span class="va">from</span>, <span class="st">"to"</span> <span class="op">=</span> <span class="va">to</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">batch</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">kras</span><span class="op">$</span><span class="va">Batch</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">cl_batch</span> <span class="op">&lt;-</span> <span class="va">cls</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Batch</span> <span class="op">==</span> <span class="va">batch</span><span class="op">)</span>
+  <span class="va">edges_batch</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">edges</span>, <span class="va">cl_batch</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"from"</span> <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">left_join</span><span class="op">(</span><span class="va">cl_batch</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span><span class="st">"tSNE1_end"</span> <span class="op">=</span> <span class="st">"tSNE1"</span>,
+                                  <span class="st">"tSNE2_end"</span> <span class="op">=</span> <span class="st">"tSNE2"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+                <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">Batch</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"to"</span> <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span> <span class="op">)</span>
+    <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">+</span>
+     <span class="fu">geom_segment</span><span class="op">(</span>data <span class="op">=</span> <span class="va">edges_batch</span>, <span class="fu">aes</span><span class="op">(</span>xend <span class="op">=</span> <span class="va">tSNE1_end</span>, yend <span class="op">=</span> <span class="va">tSNE2_end</span><span class="op">)</span>,
+                  size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="va">p</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-10-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 </div>
@@ -255,25 +269,27 @@
 <div id="test" class="section level2">
 <h2 class="hasAnchor">
 <a href="#test" class="anchor"></a>Test</h2>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu">progressionTest</span>(<span class="no">sds</span>, <span class="kw">conditions</span> <span class="kw">=</span> <span class="no">kras</span>$<span class="no">Batch</span>, <span class="kw">lineages</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">progressionTest</span><span class="op">(</span><span class="va">sds</span>, conditions <span class="op">=</span> <span class="va">kras</span><span class="op">$</span><span class="va">Batch</span>, lineages <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>##   lineage statistic      p.value
-## 1     All 0.8072967 0.000000e+00
-## 2       1 0.4931056 2.386905e-36
-## 3       2 0.4843639 4.790907e-15
-## 4       3 0.4461404 3.889379e-10</code></pre>
+## 1     All 0.8113058 0.000000e+00
+## 2       1 0.5096687 1.130333e-43
+## 3       2 0.4698712 1.166284e-12
+## 4       3 0.4315205 3.960173e-08</code></pre>
 </div>
 <div id="plot" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plot" class="anchor"></a>Plot</h2>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">p5</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">pst</span>)) +
-  <span class="fu">geom_density</span>(<span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">.4</span>, <span class="fu">aes</span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="no">Batch</span>), <span class="kw">col</span> <span class="kw">=</span> <span class="st">"transparent"</span>) +
-  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="kw">col</span> <span class="kw">=</span> <span class="no">Batch</span>), <span class="kw">fill</span> <span class="kw">=</span> <span class="st">"transparent"</span>, <span class="kw">size</span> <span class="kw">=</span> <span class="fl">1.5</span>) +
-  <span class="fu">guides</span>(<span class="kw">col</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
-  <span class="fu">scale_fill_brewer</span>(<span class="kw">palette</span> <span class="kw">=</span> <span class="st">"Accent"</span>) +
-  <span class="fu">scale_color_brewer</span>(<span class="kw">palette</span> <span class="kw">=</span> <span class="st">"Accent"</span>) +
-  <span class="fu">labs</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Pseudotime"</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="st">"Type"</span>) +
-  <span class="fu">facet_wrap</span>(~ <span class="no">Curve</span>, <span class="kw">scales</span> <span class="kw">=</span> <span class="st">"free_x"</span>)
-<span class="no">p5</span></pre></body></html></div>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p5</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">pst</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">.4</span>, <span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">Batch</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"transparent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_density</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>col <span class="op">=</span> <span class="va">Batch</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"transparent"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">guides</span><span class="op">(</span>col <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Pseudotime"</span>, fill <span class="op">=</span> <span class="st">"Type"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">Curve</span>, scales <span class="op">=</span> <span class="st">"free_x"</span><span class="op">)</span>
+<span class="va">p5</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-12-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 </div>
@@ -283,7 +299,8 @@
 <div id="test-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#test-1" class="anchor"></a>Test</h2>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu">differentiationTest</span>(<span class="no">sds</span>, <span class="kw">conditions</span> <span class="kw">=</span> <span class="no">kras</span>$<span class="no">Batch</span>, <span class="kw">pairwise</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">differentiationTest</span><span class="op">(</span><span class="va">sds</span>, conditions <span class="op">=</span> <span class="va">kras</span><span class="op">$</span><span class="va">Batch</span>, pairwise <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>## note: only 1 unique complexity parameters in default grid. Truncating the grid to 1 .
 ## 
 ## note: only 1 unique complexity parameters in default grid. Truncating the grid to 1 .
@@ -292,58 +309,62 @@
 ## 
 ## note: only 2 unique complexity parameters in default grid. Truncating the grid to 2 .</code></pre>
 <pre><code>##   pair statistic      p.value
-## 1  All 0.4819817 6.472572e-38
-## 2 1vs2 0.4263036 2.873363e-14
-## 3 1vs3 0.4013095 2.594736e-09
-## 4 2vs3 0.4906242 2.982134e-20</code></pre>
+## 1  All 0.4922910 5.845095e-43
+## 2 1vs2 0.4243234 9.487372e-14
+## 3 1vs3 0.3894048 6.747009e-07
+## 4 2vs3 0.4481773 9.899461e-12</code></pre>
 </div>
 <div id="plot-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plot-1" class="anchor"></a>Plot</h2>
-<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="no">weights</span> <span class="kw">&lt;-</span> <span class="kw pkg">condiments</span><span class="kw ns">:::</span><span class="fu">.sling_reassign</span>(<span class="no">sds</span>)
-<span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu">full_join</span>(<span class="no">weights</span> <span class="kw">%&gt;%</span>
-              <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>() <span class="kw">%&gt;%</span>
-              <span class="fu">mutate</span>(<span class="kw">X1</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">.</span>)) <span class="kw">%&gt;%</span>
-              <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span>(<span class="st">"Lineage1"</span> <span class="kw">=</span> <span class="no">V1</span>, <span class="st">"Lineage2"</span> <span class="kw">=</span> <span class="no">V2</span>, <span class="st">"Lineage3"</span> <span class="kw">=</span> <span class="no">V3</span>) <span class="kw">%&gt;%</span>
-              <span class="fu">pivot_longer</span>(<span class="fu">starts_with</span>(<span class="st">"Lineage"</span>), <span class="kw">names_to</span> <span class="kw">=</span> <span class="st">"Curve"</span>, <span class="kw">values_to</span> <span class="kw">=</span> <span class="st">"weights"</span>)
-      )</pre></body></html></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu">condiments</span><span class="fu">:::</span><span class="fu">.sling_reassign</span><span class="op">(</span><span class="va">sds</span><span class="op">)</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
+  <span class="fu">full_join</span><span class="op">(</span><span class="va">weights</span> <span class="op">%&gt;%</span> 
+              <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+              <span class="fu">mutate</span><span class="op">(</span>X1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+              <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span><span class="st">"Lineage1"</span> <span class="op">=</span> <span class="va">V1</span>, <span class="st">"Lineage2"</span> <span class="op">=</span> <span class="va">V2</span>, <span class="st">"Lineage3"</span> <span class="op">=</span> <span class="va">V3</span><span class="op">)</span> <span class="op">%&gt;%</span>
+              <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"Lineage"</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"Curve"</span>, values_to <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span>
+      <span class="op">)</span></code></pre></div>
 <pre><code>## Joining, by = c("X1", "Curve")</code></pre>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="no">df_w</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(-<span class="no">pst</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="no">X1</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">weights</span> <span class="kw">=</span> <span class="no">weights</span> / <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">weights</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">pivot_wider</span>(<span class="kw">names_from</span> <span class="kw">=</span> <span class="st">"Curve"</span>, <span class="kw">values_from</span> <span class="kw">=</span> <span class="st">"weights"</span>)
-<span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df_w</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">Lineage1</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">Lineage3</span>)) +
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_w</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">pst</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">X1</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>weights <span class="op">=</span> <span class="va">weights</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"Curve"</span>, values_from <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span>
+<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df_w</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Lineage1</span>, y <span class="op">=</span> <span class="va">Lineage3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="co"># geom_hex(aes(fill=log(..count..))) +</span>
-  <span class="fu">geom_hex</span>() +
-  <span class="fu">scale_fill_viridis_c</span>(<span class="kw">direction</span> <span class="kw">=</span> -<span class="fl">1</span>) +
-  <span class="fu">facet_wrap</span>(~<span class="no">Batch</span>, <span class="kw">scales</span> <span class="kw">=</span> <span class="st">"free"</span>) +
-  <span class="fu">geom_abline</span>(<span class="kw">slope</span> <span class="kw">=</span> -<span class="fl">1</span>, <span class="kw">intercept</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">"dotted"</span>) +
-  <span class="fu">geom_abline</span>(<span class="kw">slope</span> <span class="kw">=</span> -<span class="fl">1</span>, <span class="kw">intercept</span> <span class="kw">=</span> <span class="fl">2</span>/<span class="fl">3</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">"dotted"</span>) +
-  <span class="fu">geom_abline</span>(<span class="kw">slope</span> <span class="kw">=</span> -<span class="fl">1</span>, <span class="kw">intercept</span> <span class="kw">=</span> <span class="fl">1</span>/<span class="fl">3</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">"dotted"</span>) +
-  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fl">.53</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="fl">.53</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"w3 = 0"</span>, <span class="kw">angle</span> <span class="kw">=</span> -<span class="fl">52</span>) +
-  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fl">.62</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="fl">.1</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"w3 = 1/3"</span>, <span class="kw">angle</span> <span class="kw">=</span> -<span class="fl">52</span>) +
-  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fl">.14</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="fl">.14</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"w3 = 2/3"</span>, <span class="kw">angle</span> <span class="kw">=</span> -<span class="fl">52</span>) +
-  <span class="fu">theme</span>(<span class="kw">legend.position</span> <span class="kw">=</span> <span class="st">"bottom"</span>) +
-  <span class="fu">labs</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Weights for Lineage 1 (w1)"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">"Weights for Lineage 2 (w2)"</span>,
-       <span class="kw">fill</span> <span class="kw">=</span> <span class="st">"counts per hexagon"</span>)
-<span class="no">p</span></pre></body></html></div>
+  <span class="fu">geom_hex</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_viridis_c</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">Batch</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_abline</span><span class="op">(</span>slope <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, intercept <span class="op">=</span> <span class="fl">1</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_abline</span><span class="op">(</span>slope <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, intercept <span class="op">=</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_abline</span><span class="op">(</span>slope <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, intercept <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">.53</span>, y <span class="op">=</span> <span class="fl">.53</span>, label <span class="op">=</span> <span class="st">"w3 = 0"</span>, angle <span class="op">=</span> <span class="op">-</span><span class="fl">52</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">.62</span>, y <span class="op">=</span> <span class="fl">.1</span>, label <span class="op">=</span> <span class="st">"w3 = 1/3"</span>, angle <span class="op">=</span> <span class="op">-</span><span class="fl">52</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">.14</span>, y <span class="op">=</span> <span class="fl">.14</span>, label <span class="op">=</span> <span class="st">"w3 = 2/3"</span>, angle <span class="op">=</span> <span class="op">-</span><span class="fl">52</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Weights for Lineage 1 (w1)"</span>, y <span class="op">=</span> <span class="st">"Weights for Lineage 2 (w2)"</span>,
+       fill <span class="op">=</span> <span class="st">"counts per hexagon"</span><span class="op">)</span>
+<span class="va">p</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-14-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">df_w</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(-<span class="no">pst</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="no">X1</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">weights</span> <span class="kw">=</span> <span class="no">weights</span> / <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">weights</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">ungroup</span>() <span class="kw">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="no">Batch</span>, <span class="no">Curve</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">summarise</span>(<span class="kw">weights</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">weights</span>), <span class="kw">.groups</span> <span class="kw">=</span> <span class="kw">NULL</span>)</pre></body></html></div>
-<pre><code>## `summarise()` regrouping output by 'Batch' (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="no">p2</span> <span class="kw">&lt;-</span> <span class="fu">ggplot</span>(<span class="no">df_w</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">Curve</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="no">Batch</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">weights</span>)) +
-  <span class="fu">geom_col</span>(<span class="kw">position</span> <span class="kw">=</span> <span class="st">"dodge"</span>) +
-  <span class="fu">scale_fill_brewer</span>(<span class="kw">palette</span> <span class="kw">=</span> <span class="st">"Accent"</span>) +
-  <span class="fu">theme</span>(<span class="kw">legend.position</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.7</span>, <span class="fl">.7</span>)) +
-  <span class="fu">labs</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">""</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">"Mean weight"</span>)
-<span class="no">p2</span></pre></body></html></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_w</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">pst</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">X1</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>weights <span class="op">=</span> <span class="va">weights</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">Batch</span>, <span class="va">Curve</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarise</span><span class="op">(</span>weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by 'Batch'. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df_w</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Curve</span>, fill <span class="op">=</span> <span class="va">Batch</span>, y <span class="op">=</span> <span class="va">weights</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.7</span>, <span class="fl">.7</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">"Mean weight"</span><span class="op">)</span>
+<span class="va">p2</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-15-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 </div>
@@ -351,219 +372,230 @@
 <h1 class="hasAnchor">
 <a href="#differential-expression" class="anchor"></a>Differential expression</h1>
 <p>We use <em>tradeSeq</em> <span class="citation">(Van den Berge et al. 2020)</span>.</p>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">3</span>)
-<span class="no">filter</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="fu">counts</span>(<span class="no">kras</span>), <span class="fl">1</span>, <span class="kw">function</span>(<span class="no">g</span>) {
-    <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">g</span> <span class="kw">&gt;=</span> <span class="fl">5</span>) <span class="kw">&gt;=</span> <span class="fl">10</span>
-})
-<span class="no">kras</span> <span class="kw">&lt;-</span> <span class="no">kras</span>[<span class="no">filter</span>, ]</pre></body></html></div>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
+<span class="va">filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="fu">counts</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">g</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">10</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="va">kras</span> <span class="op">&lt;-</span> <span class="va">kras</span><span class="op">[</span><span class="va">filter</span>, <span class="op">]</span></code></pre></div>
 <div id="select-number-of-knots" class="section level3">
 <h3 class="hasAnchor">
 <a href="#select-number-of-knots" class="anchor"></a>Select number of knots</h3>
-<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">3</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">BiocParallel</span>)
-<span class="no">BPPARAM</span> <span class="kw">&lt;-</span> <span class="kw pkg">BiocParallel</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span>()
-<span class="no">BPPARAM</span>$<span class="no">workers</span> <span class="kw">&lt;-</span> <span class="fl">4</span>
-<span class="no">icMat</span> <span class="kw">&lt;-</span> <span class="fu">evaluateK</span>(<span class="kw">counts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>),
-                   <span class="kw">pseudotime</span> <span class="kw">=</span> <span class="fu">slingPseudotime</span>(<span class="no">sds</span>, <span class="kw">na</span> <span class="kw">=</span> <span class="fl">FALSE</span>),
-                   <span class="kw">cellWeights</span> <span class="kw">=</span> <span class="no">weights</span>,
-                   <span class="kw">conditions</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu">colData</span>(<span class="no">kras</span>)$<span class="no">Batch</span>),
-                   <span class="kw">nGenes</span> <span class="kw">=</span> <span class="fl">300</span>,
-                   <span class="kw">k</span> <span class="kw">=</span> <span class="fl">3</span>:<span class="fl">7</span>,
-                   <span class="kw">parallel</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                   <span class="kw">BPPARAM</span> <span class="kw">=</span> <span class="no">BPPARAM</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel">BiocParallel</a></span><span class="op">)</span>
+<span class="va">BPPARAM</span> <span class="op">&lt;-</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">BPPARAM</span><span class="op">$</span><span class="va">workers</span> <span class="op">&lt;-</span> <span class="fl">4</span>
+<span class="va">icMat</span> <span class="op">&lt;-</span> <span class="fu">evaluateK</span><span class="op">(</span>counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span>,
+                   pseudotime <span class="op">=</span> <span class="fu">slingPseudotime</span><span class="op">(</span><span class="va">sds</span>, na <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
+                   cellWeights <span class="op">=</span> <span class="va">weights</span>,
+                   conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">Batch</span><span class="op">)</span>,
+                   nGenes <span class="op">=</span> <span class="fl">300</span>,
+                   k <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">7</span>,
+                   parallel <span class="op">=</span> <span class="cn">TRUE</span>,
+                   BPPARAM <span class="op">=</span> <span class="va">BPPARAM</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="fit-gam" class="section level3">
 <h3 class="hasAnchor">
 <a href="#fit-gam" class="anchor"></a>Fit GAM</h3>
 <p>Next, we fit the NB-GAMs using 5 knots, based on the pseudotime and cell-level weights estimated by Slingshot. We use the <code>conditions</code> argument to fit separate smoothers for each condition.</p>
-<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">3</span>)
-<span class="no">kras</span>@<span class="kw">int_metadata</span>$<span class="no">slingshot</span> <span class="kw">&lt;-</span> <span class="no">sds</span>
-<span class="no">kras</span> <span class="kw">&lt;-</span> <span class="fu">fitGAM</span>(<span class="kw">counts</span> <span class="kw">=</span> <span class="no">kras</span>,
-               <span class="kw">conditions</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu">colData</span>(<span class="no">kras</span>)$<span class="no">Batch</span>),
-               <span class="kw">parallel</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-               <span class="kw">genes</span> <span class="kw">=</span> <span class="fl">1</span>:<span class="fl">10</span>,
-               <span class="kw">BPPARAM</span> <span class="kw">=</span> <span class="no">BPPARAM</span>,
-               <span class="kw">nknots</span> <span class="kw">=</span> <span class="fl">6</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
+<span class="va">kras</span><span class="op">@</span><span class="va">int_metadata</span><span class="op">$</span><span class="va">slingshot</span> <span class="op">&lt;-</span> <span class="va">sds</span>
+<span class="va">kras</span> <span class="op">&lt;-</span> <span class="fu">fitGAM</span><span class="op">(</span>counts <span class="op">=</span> <span class="va">kras</span>,
+               conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">Batch</span><span class="op">)</span>,
+               parallel <span class="op">=</span> <span class="cn">TRUE</span>,
+               genes <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,
+               BPPARAM <span class="op">=</span> <span class="va">BPPARAM</span>,
+               nknots <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="differential-expression-between-conditions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#differential-expression-between-conditions" class="anchor"></a>Differential expression between conditions</h2>
-<div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="no">condRes</span> <span class="kw">&lt;-</span> <span class="fu">conditionTest</span>(<span class="no">kras</span>, <span class="kw">l2fc</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="fl">2</span>), <span class="kw">lineages</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">condRes</span>$<span class="no">padj</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span>(<span class="no">condRes</span>$<span class="no">pvalue</span>, <span class="st">"fdr"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">condRes</span>$<span class="no">padj</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>, <span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">condRes</span> <span class="op">&lt;-</span> <span class="fu">conditionTest</span><span class="op">(</span><span class="va">kras</span>, l2fc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>, lineages <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">pvalue</span>, <span class="st">"fdr"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 0.07581454</code></pre>
-<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">condRes</span>$<span class="no">padj</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>, <span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 363</code></pre>
-<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="no">conditionGenes</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">condRes</span>)[<span class="no">condRes</span>$<span class="no">padj</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>]
-<span class="no">conditionGenes</span> <span class="kw">&lt;-</span> <span class="no">conditionGenes</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">conditionGenes</span>)]</pre></body></html></div>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">conditionGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">)</span><span class="op">[</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">]</span>
+<span class="va">conditionGenes</span> <span class="op">&lt;-</span> <span class="va">conditionGenes</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">conditionGenes</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 </div>
 <div id="visualize-most-and-least-significant-gene" class="section level2">
 <h2 class="hasAnchor">
 <a href="#visualize-most-and-least-significant-gene" class="anchor"></a>Visualize most and least significant gene</h2>
-<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="co"># plot genes</span>
-<span class="no">scales</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"#7FC97F"</span>, <span class="st">"#57A059"</span>, <span class="st">"#2E7935"</span>,
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># plot genes</span>
+<span class="va">scales</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#7FC97F"</span>, <span class="st">"#57A059"</span>, <span class="st">"#2E7935"</span>,
             <span class="st">"#BEAED4"</span>, <span class="st">"#9687AC"</span>, <span class="st">"#706285"</span>,
-            <span class="st">"#FDC086"</span>, <span class="st">"#CC945C"</span>, <span class="st">"#9D6A34"</span>)
-<span class="no">scales</span> <span class="kw">&lt;-</span> <span class="no">scales</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">7</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">8</span>, <span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">9</span>)]
-<span class="no">oo</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="no">condRes</span>$<span class="no">waldStat</span>, <span class="kw">decreasing</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+            <span class="st">"#FDC086"</span>, <span class="st">"#CC945C"</span>, <span class="st">"#9D6A34"</span><span class="op">)</span>
+<span class="va">scales</span> <span class="op">&lt;-</span> <span class="va">scales</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">7</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">8</span>, <span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">9</span><span class="op">)</span><span class="op">]</span>
+<span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">waldStat</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># most significant gene</span>
-<span class="no">p6</span> <span class="kw">&lt;-</span> <span class="fu">plotSmoothers</span>(<span class="no">kras</span>, <span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>,
-              <span class="kw">gene</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>)[<span class="no">oo</span>[<span class="fl">1</span>]],
-              <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">curvesCols</span> <span class="kw">=</span> <span class="no">scales</span>, <span class="kw">sample</span> <span class="kw">=</span> <span class="fl">.3</span>) +
-  <span class="fu">scale_color_manual</span>(<span class="kw">values</span> <span class="kw">=</span> <span class="no">scales</span>) +
-  <span class="fu">ggtitle</span>(<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>)[<span class="no">oo</span>[<span class="fl">1</span>]])</pre></body></html></div>
+<span class="va">p6</span> <span class="op">&lt;-</span> <span class="fu">plotSmoothers</span><span class="op">(</span><span class="va">kras</span>, <span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span>,
+              gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,
+              alpha <span class="op">=</span> <span class="fl">1</span>, curvesCols <span class="op">=</span> <span class="va">scales</span>, sample <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scales</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## Scale for 'colour' is already present. Adding another scale for 'colour',
 ## which will replace the existing scale.</code></pre>
-<div class="sourceCode" id="cb45"><html><body><pre class="r"><span class="co"># Second most significant gene</span>
-<span class="no">p7</span> <span class="kw">&lt;-</span> <span class="fu">plotSmoothers</span>(<span class="no">kras</span>, <span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>,
-              <span class="kw">gene</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>)[<span class="no">oo</span>[<span class="fl">2</span>]],
-              <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">curvesCols</span> <span class="kw">=</span> <span class="no">scales</span>, <span class="kw">sample</span> <span class="kw">=</span> <span class="fl">.3</span>) +
-  <span class="fu">scale_color_manual</span>(<span class="kw">values</span> <span class="kw">=</span> <span class="no">scales</span>) +
-  <span class="fu">ggtitle</span>(<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>)[<span class="no">oo</span>[<span class="fl">2</span>]])</pre></body></html></div>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Second most significant gene</span>
+<span class="va">p7</span> <span class="op">&lt;-</span> <span class="fu">plotSmoothers</span><span class="op">(</span><span class="va">kras</span>, <span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span>,
+              gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,
+              alpha <span class="op">=</span> <span class="fl">1</span>, curvesCols <span class="op">=</span> <span class="va">scales</span>, sample <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scales</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## Scale for 'colour' is already present. Adding another scale for 'colour',
 ## which will replace the existing scale.</code></pre>
-<div class="sourceCode" id="cb47"><html><body><pre class="r"><span class="co"># least significant gene</span>
-<span class="no">p8</span> <span class="kw">&lt;-</span> <span class="fu">plotSmoothers</span>(<span class="no">kras</span>, <span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>,
-              <span class="kw">gene</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>)[<span class="no">oo</span>[<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">kras</span>)]],
-              <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">curvesCols</span> <span class="kw">=</span> <span class="no">scales</span>, <span class="kw">sample</span> <span class="kw">=</span> <span class="fl">.3</span>) +
-  <span class="fu">scale_color_manual</span>(<span class="kw">values</span> <span class="kw">=</span> <span class="no">scales</span>) +
-  <span class="fu">ggtitle</span>(<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="fu">assays</span>(<span class="no">kras</span>)$<span class="no">counts</span>)[<span class="no">oo</span>[<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">kras</span>)]])</pre></body></html></div>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># least significant gene</span>
+<span class="va">p8</span> <span class="op">&lt;-</span> <span class="fu">plotSmoothers</span><span class="op">(</span><span class="va">kras</span>, <span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span>,
+              gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>,
+              alpha <span class="op">=</span> <span class="fl">1</span>, curvesCols <span class="op">=</span> <span class="va">scales</span>, sample <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scales</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">kras</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## Scale for 'colour' is already present. Adding another scale for 'colour',
 ## which will replace the existing scale.</code></pre>
-<div class="sourceCode" id="cb49"><html><body><pre class="r"><span class="no">p6</span></pre></body></html></div>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p6</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-19-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb50"><html><body><pre class="r"><span class="no">p7</span></pre></body></html></div>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p7</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-19-2.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb51"><html><body><pre class="r"><span class="no">p8</span></pre></body></html></div>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p8</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-19-3.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div id="heatmaps-of-genes-de-between-conditions-for-lineage-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#heatmaps-of-genes-de-between-conditions-for-lineage-1" class="anchor"></a>Heatmaps of genes DE between conditions for lineage 1</h2>
 <p>Below we show heatmaps of the genes DE between conditions. The DE genes in the heatmaps are ordered according to a hierarchical clustering on the TGF-Beta condition.</p>
-<div class="sourceCode" id="cb52"><html><body><pre class="r"><span class="co">### based on mean smoother</span>
-<span class="no">condRes</span>$<span class="no">padj_lineage1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span>(<span class="no">condRes</span>$<span class="no">pvalue_lineage1</span>, <span class="st">"fdr"</span>)
-<span class="no">conditionGenes_lineage1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">condRes</span>)[<span class="no">condRes</span>$<span class="no">padj_lineage1</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>]
-<span class="no">conditionGenes_lineage1</span> <span class="kw">&lt;-</span> <span class="no">conditionGenes_lineage1</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">conditionGenes_lineage1</span>)]
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### based on mean smoother</span>
+<span class="va">condRes</span><span class="op">$</span><span class="va">padj_lineage1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">pvalue_lineage1</span>, <span class="st">"fdr"</span><span class="op">)</span>
+<span class="va">conditionGenes_lineage1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">)</span><span class="op">[</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj_lineage1</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">]</span>
+<span class="va">conditionGenes_lineage1</span> <span class="op">&lt;-</span> <span class="va">conditionGenes_lineage1</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">conditionGenes_lineage1</span><span class="op">)</span><span class="op">]</span>
 
-<span class="no">yhatSmooth</span> <span class="kw">&lt;-</span> <span class="fu">predictSmooth</span>(<span class="no">kras</span>, <span class="kw">gene</span> <span class="kw">=</span> <span class="no">conditionGenes_lineage1</span>, <span class="kw">nPoints</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">tidy</span> <span class="kw">=</span> <span class="fl">FALSE</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span>()
-<span class="no">yhatSmoothScaled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="no">yhatSmooth</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>:<span class="fl">50</span>, <span class="fl">151</span>:<span class="fl">200</span>, <span class="fl">301</span>:<span class="fl">350</span>)], <span class="fl">1</span>, <span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/rescale.html">rescale</a></span>))
-<span class="no">heatSmooth_H2122A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[, <span class="fl">1</span>:<span class="fl">50</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"H2122A"</span>, <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">yhatSmooth</span> <span class="op">&lt;-</span> <span class="fu">predictSmooth</span><span class="op">(</span><span class="va">kras</span>, gene <span class="op">=</span> <span class="va">conditionGenes_lineage1</span>, nPoints <span class="op">=</span> <span class="fl">50</span>, tidy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">yhatSmoothScaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">yhatSmooth</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>, <span class="fl">151</span><span class="op">:</span><span class="fl">200</span>, <span class="fl">301</span><span class="op">:</span><span class="fl">350</span><span class="op">)</span><span class="op">]</span>, <span class="fl">1</span>, <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/rescale.html">rescale</a></span><span class="op">)</span><span class="op">)</span>
+<span class="va">heatSmooth_H2122A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"H2122A"</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>,
+  silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">matchingHeatmap_H358A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[<span class="no">heatSmooth_H2122A</span>$<span class="no">tree_row</span>$<span class="no">order</span>, <span class="fl">51</span>:<span class="fl">100</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">cluster_rows</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"H358A"</span>,
-  <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">matchingHeatmap_H358A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_H2122A</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">51</span><span class="op">:</span><span class="fl">100</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"H358A"</span>,
+  legend <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">matchingHeatmap_SW1573A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[<span class="no">heatSmooth_H2122A</span>$<span class="no">tree_row</span>$<span class="no">order</span>, <span class="fl">101</span>:<span class="fl">150</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">cluster_rows</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"SW1573A"</span>,
-  <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">matchingHeatmap_SW1573A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_H2122A</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">101</span><span class="op">:</span><span class="fl">150</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"SW1573A"</span>,
+  legend <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">p9</span> <span class="kw">&lt;-</span> <span class="fu">plot_grid</span>(<span class="no">heatSmooth_H2122A</span><span class="kw">[[</span><span class="fl">4</span>]], <span class="no">matchingHeatmap_H358A</span><span class="kw">[[</span><span class="fl">4</span>]], <span class="no">matchingHeatmap_SW1573A</span><span class="kw">[[</span><span class="fl">4</span>]],
-                <span class="kw">NULL</span>, <span class="kw">NULL</span>, <span class="kw">NULL</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">rel_widths</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.4</span>, <span class="fl">1</span>, <span class="fl">1</span>), <span class="kw">rel_heights</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">10</span>, <span class="fl">1</span>)) +
-  <span class="fu">draw_text</span>(<span class="st">"Lineage 1"</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fl">.5</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="fl">.05</span>)
-<span class="no">p9</span></pre></body></html></div>
+<span class="va">p9</span> <span class="op">&lt;-</span> <span class="fu">plot_grid</span><span class="op">(</span><span class="va">heatSmooth_H2122A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">matchingHeatmap_H358A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">matchingHeatmap_SW1573A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,
+                <span class="cn">NULL</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>, ncol <span class="op">=</span> <span class="fl">3</span>, rel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.4</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">draw_text</span><span class="op">(</span><span class="st">"Lineage 1"</span>, x <span class="op">=</span> <span class="fl">.5</span>, y <span class="op">=</span> <span class="fl">.05</span><span class="op">)</span>
+<span class="va">p9</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-20-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div id="heatmaps-of-genes-de-between-conditions-for-lineage-2" class="section level2">
 <h2 class="hasAnchor">
 <a href="#heatmaps-of-genes-de-between-conditions-for-lineage-2" class="anchor"></a>Heatmaps of genes DE between conditions for lineage 2</h2>
 <p>Below we show heatmaps of the genes DE between conditions. The DE genes in the heatmaps are ordered according to a hierarchical clustering on the TGF-Beta condition.</p>
-<div class="sourceCode" id="cb53"><html><body><pre class="r"><span class="no">condRes</span>$<span class="no">padj_lineage2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span>(<span class="no">condRes</span>$<span class="no">pvalue_lineage2</span>, <span class="st">"fdr"</span>)
-<span class="no">conditionGenes_lineage2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">condRes</span>)[<span class="no">condRes</span>$<span class="no">padj_lineage2</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>]
-<span class="no">conditionGenes_lineage2</span> <span class="kw">&lt;-</span> <span class="no">conditionGenes_lineage1</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">conditionGenes_lineage2</span>)]
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">condRes</span><span class="op">$</span><span class="va">padj_lineage2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">pvalue_lineage2</span>, <span class="st">"fdr"</span><span class="op">)</span>
+<span class="va">conditionGenes_lineage2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">)</span><span class="op">[</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj_lineage2</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">]</span>
+<span class="va">conditionGenes_lineage2</span> <span class="op">&lt;-</span> <span class="va">conditionGenes_lineage1</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">conditionGenes_lineage2</span><span class="op">)</span><span class="op">]</span>
 
-<span class="no">yhatSmooth</span> <span class="kw">&lt;-</span> <span class="fu">predictSmooth</span>(<span class="no">kras</span>, <span class="kw">gene</span> <span class="kw">=</span> <span class="no">conditionGenes_lineage2</span>, <span class="kw">nPoints</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">tidy</span> <span class="kw">=</span> <span class="fl">FALSE</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span>()
-<span class="no">yhatSmoothScaled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="no">yhatSmooth</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">51</span>:<span class="fl">100</span>, <span class="fl">201</span>:<span class="fl">250</span>, <span class="fl">351</span>:<span class="fl">400</span>)],<span class="fl">1</span>, <span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/rescale.html">rescale</a></span>))
+<span class="va">yhatSmooth</span> <span class="op">&lt;-</span> <span class="fu">predictSmooth</span><span class="op">(</span><span class="va">kras</span>, gene <span class="op">=</span> <span class="va">conditionGenes_lineage2</span>, nPoints <span class="op">=</span> <span class="fl">50</span>, tidy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">yhatSmoothScaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">yhatSmooth</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">51</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">201</span><span class="op">:</span><span class="fl">250</span>, <span class="fl">351</span><span class="op">:</span><span class="fl">400</span><span class="op">)</span><span class="op">]</span>,<span class="fl">1</span>, <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/rescale.html">rescale</a></span><span class="op">)</span><span class="op">)</span>
 
-<span class="no">heatSmooth_H2122A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[, <span class="fl">1</span>:<span class="fl">50</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"H2122A"</span>, <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">heatSmooth_H2122A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"H2122A"</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>,
+  silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">matchingHeatmap_H358A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[<span class="no">heatSmooth_H2122A</span>$<span class="no">tree_row</span>$<span class="no">order</span>, <span class="fl">51</span>:<span class="fl">100</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">cluster_rows</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"H358A"</span>,
-  <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">matchingHeatmap_H358A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_H2122A</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">51</span><span class="op">:</span><span class="fl">100</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"H358A"</span>,
+  legend <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">matchingHeatmap_SW1573A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[<span class="no">heatSmooth_H2122A</span>$<span class="no">tree_row</span>$<span class="no">order</span>, <span class="fl">101</span>:<span class="fl">150</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">cluster_rows</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"SW1573A"</span>,
-  <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">matchingHeatmap_SW1573A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_H2122A</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">101</span><span class="op">:</span><span class="fl">150</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"SW1573A"</span>,
+  legend <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">p10</span> <span class="kw">&lt;-</span> <span class="fu">plot_grid</span>(<span class="no">heatSmooth_H2122A</span><span class="kw">[[</span><span class="fl">4</span>]], <span class="no">matchingHeatmap_H358A</span><span class="kw">[[</span><span class="fl">4</span>]], <span class="no">matchingHeatmap_SW1573A</span><span class="kw">[[</span><span class="fl">4</span>]],
-                <span class="kw">NULL</span>, <span class="kw">NULL</span>, <span class="kw">NULL</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">rel_widths</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.4</span>, <span class="fl">1</span>, <span class="fl">1</span>), <span class="kw">rel_heights</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">10</span>, <span class="fl">1</span>)) +
-  <span class="fu">draw_text</span>(<span class="st">"Lineage 2"</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fl">.5</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="fl">.05</span>)
-<span class="no">p10</span></pre></body></html></div>
+<span class="va">p10</span> <span class="op">&lt;-</span> <span class="fu">plot_grid</span><span class="op">(</span><span class="va">heatSmooth_H2122A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">matchingHeatmap_H358A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">matchingHeatmap_SW1573A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,
+                <span class="cn">NULL</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>, ncol <span class="op">=</span> <span class="fl">3</span>, rel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.4</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">draw_text</span><span class="op">(</span><span class="st">"Lineage 2"</span>, x <span class="op">=</span> <span class="fl">.5</span>, y <span class="op">=</span> <span class="fl">.05</span><span class="op">)</span>
+<span class="va">p10</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-21-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div id="heatmaps-of-genes-de-between-conditions-for-lineage-3" class="section level2">
 <h2 class="hasAnchor">
 <a href="#heatmaps-of-genes-de-between-conditions-for-lineage-3" class="anchor"></a>Heatmaps of genes DE between conditions for lineage 3</h2>
-<div class="sourceCode" id="cb54"><html><body><pre class="r"><span class="no">condRes</span>$<span class="no">padj_lineage3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span>(<span class="no">condRes</span>$<span class="no">pvalue_lineage3</span>, <span class="st">"fdr"</span>)
-<span class="no">conditionGenes_lineage3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">condRes</span>)[<span class="no">condRes</span>$<span class="no">padj_lineage3</span> <span class="kw">&lt;=</span> <span class="fl">0.05</span>]
-<span class="no">conditionGenes_lineage3</span> <span class="kw">&lt;-</span> <span class="no">conditionGenes_lineage3</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">conditionGenes_lineage3</span>)]
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">condRes</span><span class="op">$</span><span class="va">padj_lineage3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">pvalue_lineage3</span>, <span class="st">"fdr"</span><span class="op">)</span>
+<span class="va">conditionGenes_lineage3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">)</span><span class="op">[</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj_lineage3</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">]</span>
+<span class="va">conditionGenes_lineage3</span> <span class="op">&lt;-</span> <span class="va">conditionGenes_lineage3</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">conditionGenes_lineage3</span><span class="op">)</span><span class="op">]</span>
 
-<span class="no">yhatSmooth</span> <span class="kw">&lt;-</span> <span class="fu">predictSmooth</span>(<span class="no">kras</span>, <span class="kw">gene</span> <span class="kw">=</span> <span class="no">conditionGenes_lineage3</span>, <span class="kw">nPoints</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">tidy</span> <span class="kw">=</span> <span class="fl">FALSE</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span>()
-<span class="no">yhatSmoothScaled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="no">yhatSmooth</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">101</span>:<span class="fl">150</span>, <span class="fl">251</span>:<span class="fl">300</span>, <span class="fl">401</span>:<span class="fl">450</span>)],<span class="fl">1</span>, <span class="kw pkg">scales</span><span class="kw ns">::</span><span class="no"><a href="https://scales.r-lib.org//reference/rescale.html">rescale</a></span>))
-<span class="no">heatSmooth_H2122A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[, <span class="fl">1</span>:<span class="fl">50</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"H2122A"</span>, <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">yhatSmooth</span> <span class="op">&lt;-</span> <span class="fu">predictSmooth</span><span class="op">(</span><span class="va">kras</span>, gene <span class="op">=</span> <span class="va">conditionGenes_lineage3</span>, nPoints <span class="op">=</span> <span class="fl">50</span>, tidy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">yhatSmoothScaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">yhatSmooth</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">101</span><span class="op">:</span><span class="fl">150</span>, <span class="fl">251</span><span class="op">:</span><span class="fl">300</span>, <span class="fl">401</span><span class="op">:</span><span class="fl">450</span><span class="op">)</span><span class="op">]</span>,<span class="fl">1</span>, <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/rescale.html">rescale</a></span><span class="op">)</span><span class="op">)</span>
+<span class="va">heatSmooth_H2122A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"H2122A"</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>,
+  silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">matchingHeatmap_H358A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[<span class="no">heatSmooth_H2122A</span>$<span class="no">tree_row</span>$<span class="no">order</span>, <span class="fl">51</span>:<span class="fl">100</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">cluster_rows</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"H358A"</span>,
-  <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">matchingHeatmap_H358A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_H2122A</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">51</span><span class="op">:</span><span class="fl">100</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"H358A"</span>,
+  legend <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">matchingHeatmap_SW1573A</span> <span class="kw">&lt;-</span> <span class="fu">pheatmap</span>(<span class="no">yhatSmoothScaled</span>[<span class="no">heatSmooth_H2122A</span>$<span class="no">tree_row</span>$<span class="no">order</span>, <span class="fl">101</span>:<span class="fl">150</span>],
-  <span class="kw">cluster_cols</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">cluster_rows</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">show_rownames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">show_colnames</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"SW1573A"</span>,
-  <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">silent</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
+<span class="va">matchingHeatmap_SW1573A</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_H2122A</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">101</span><span class="op">:</span><span class="fl">150</span><span class="op">]</span>,
+  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>,
+  show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"SW1573A"</span>,
+  legend <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
-<span class="no">p11</span> <span class="kw">&lt;-</span> <span class="fu">plot_grid</span>(<span class="no">heatSmooth_H2122A</span><span class="kw">[[</span><span class="fl">4</span>]], <span class="no">matchingHeatmap_H358A</span><span class="kw">[[</span><span class="fl">4</span>]], <span class="no">matchingHeatmap_SW1573A</span><span class="kw">[[</span><span class="fl">4</span>]],
-                 <span class="kw">NULL</span>, <span class="kw">NULL</span>, <span class="kw">NULL</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">rel_widths</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.4</span>, <span class="fl">1</span>, <span class="fl">1</span>), <span class="kw">rel_heights</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">10</span>, <span class="fl">1</span>)) +
-  <span class="fu">draw_text</span>(<span class="st">"Lineage 3"</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fl">.5</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="fl">.05</span>)
-<span class="no">p11</span></pre></body></html></div>
+<span class="va">p11</span> <span class="op">&lt;-</span> <span class="fu">plot_grid</span><span class="op">(</span><span class="va">heatSmooth_H2122A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">matchingHeatmap_H358A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">matchingHeatmap_SW1573A</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,
+                 <span class="cn">NULL</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>, ncol <span class="op">=</span> <span class="fl">3</span>, rel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.4</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">draw_text</span><span class="op">(</span><span class="st">"Lineage 3"</span>, x <span class="op">=</span> <span class="fl">.5</span>, y <span class="op">=</span> <span class="fl">.05</span><span class="op">)</span>
+<span class="va">p11</span></code></pre></div>
 <p><img src="KRAS_files/figure-html/unnamed-chunk-22-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="session-info" class="section level1">
 <h1 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session info</h1>
-<div class="sourceCode" id="cb55"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R version 4.0.3 (2020-10-10)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.1 LTS
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
 ## 
 ## Matrix products: default
-## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
-## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
 ## [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
@@ -571,84 +603,92 @@
 ## 
 ## other attached packages:
 ##  [1] caret_6.0-86                lattice_0.20-41            
-##  [3] tidyr_1.1.0                 cowplot_1.0.0              
+##  [3] tidyr_1.1.2                 cowplot_1.1.1              
 ##  [5] pheatmap_1.0.12             RColorBrewer_1.1-2         
-##  [7] scater_1.16.2               ggplot2_3.3.1              
-##  [9] condiments_0.1.0            slingshot_1.6.1            
-## [11] princurve_2.1.5             SingleCellExperiment_1.10.1
-## [13] SummarizedExperiment_1.18.2 DelayedArray_0.14.1        
-## [15] matrixStats_0.57.0          Biobase_2.48.0             
-## [17] GenomicRanges_1.40.0        GenomeInfoDb_1.24.2        
-## [19] IRanges_2.22.2              S4Vectors_0.26.1           
-## [21] BiocGenerics_0.34.0         tradeSeq_1.5.07            
-## [23] dplyr_1.0.0                 here_0.1                   
-## [25] knitr_1.28                 
+##  [7] scater_1.18.3               ggplot2_3.3.3              
+##  [9] condiments_0.1.0            slingshot_1.8.0            
+## [11] princurve_2.1.6             SingleCellExperiment_1.12.0
+## [13] SummarizedExperiment_1.20.0 Biobase_2.50.0             
+## [15] GenomicRanges_1.42.0        GenomeInfoDb_1.26.2        
+## [17] IRanges_2.24.1              S4Vectors_0.28.1           
+## [19] BiocGenerics_0.36.0         MatrixGenerics_1.2.1       
+## [21] matrixStats_0.58.0          tradeSeq_1.5.06            
+## [23] dplyr_1.0.4                 here_1.0.1                 
+## [25] knitr_1.31                 
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] VGAM_1.1-4                plyr_1.8.6               
-##   [3] igraph_1.2.5              splines_4.0.3            
-##   [5] BiocParallel_1.22.0       densityClust_0.3         
-##   [7] fastICA_1.2-2             digest_0.6.27            
-##   [9] foreach_1.5.0             htmltools_0.4.0          
-##  [11] viridis_0.5.1             magrittr_2.0.1           
-##  [13] memoise_1.1.0             tensor_1.5               
-##  [15] cluster_2.1.0             limma_3.44.3             
-##  [17] recipes_0.1.12            gower_0.2.1              
-##  [19] docopt_0.7.1              pkgdown_1.5.1            
-##  [21] colorspace_2.0-0          ggrepel_0.8.2            
-##  [23] xfun_0.14                 hexbin_1.28.1            
-##  [25] sparsesvd_0.2             crayon_1.3.4             
-##  [27] RCurl_1.98-1.2            spatstat_1.64-1          
-##  [29] spatstat.data_1.4-3       survival_3.1-12          
-##  [31] iterators_1.0.12          ape_5.4-1                
-##  [33] glue_1.4.2                polyclip_1.10-0          
-##  [35] gtable_0.3.0              ipred_0.9-9              
-##  [37] zlibbioc_1.34.0           XVector_0.28.0           
-##  [39] Ecume_0.9.0               BiocSingular_1.4.0       
-##  [41] kernlab_0.9-29            abind_1.4-5              
-##  [43] scales_1.1.1              edgeR_3.30.3             
-##  [45] Rcpp_1.0.5                viridisLite_0.3.0        
-##  [47] rsvd_1.0.3                lava_1.6.7               
-##  [49] prodlim_2019.11.13        FNN_1.1.3                
-##  [51] ellipsis_0.3.1            farver_2.0.3             
-##  [53] pkgconfig_2.0.3           nnet_7.3-14              
-##  [55] deldir_0.1-25             locfit_1.5-9.4           
-##  [57] labeling_0.4.2            tidyselect_1.1.0         
-##  [59] rlang_0.4.10              reshape2_1.4.4           
-##  [61] munsell_0.5.0             tools_4.0.3              
-##  [63] generics_0.1.0            evaluate_0.14            
-##  [65] stringr_1.4.0             yaml_2.2.1               
-##  [67] goftest_1.2-2             ModelMetrics_1.2.2.2     
-##  [69] transport_0.12-2          fs_1.4.1                 
-##  [71] DDRTree_0.1.5             randomForest_4.6-14      
-##  [73] purrr_0.3.4               RANN_2.6.1               
-##  [75] pbapply_1.4-3             nlme_3.1-151             
-##  [77] monocle_2.16.0            slam_0.1-48              
-##  [79] compiler_4.0.3            rstudioapi_0.13          
-##  [81] beeswarm_0.2.3            e1071_1.7-3              
-##  [83] spatstat.utils_1.17-0     tibble_3.0.1             
-##  [85] stringi_1.5.3             desc_1.2.0               
-##  [87] Matrix_1.2-18             HSMMSingleCell_1.8.0     
-##  [89] vctrs_0.3.1               pillar_1.4.4             
-##  [91] lifecycle_0.2.0           combinat_0.0-8           
-##  [93] BiocNeighbors_1.6.0       data.table_1.12.8        
-##  [95] bitops_1.0-6              irlba_2.3.3              
-##  [97] R6_2.5.0                  gridExtra_2.3            
-##  [99] vipor_0.4.5               codetools_0.2-18         
-## [101] MASS_7.3-51.6             assertthat_0.2.1         
-## [103] rprojroot_2.0.2           withr_2.3.0              
-## [105] qlcMatrix_0.9.7           GenomeInfoDbData_1.2.3   
-## [107] mgcv_1.8-33               grid_4.0.3               
-## [109] rpart_4.1-15              timeDate_3043.102        
-## [111] class_7.3-17              rmarkdown_2.2            
-## [113] DelayedMatrixStats_1.10.1 Rtsne_0.15               
-## [115] pROC_1.16.2               lubridate_1.7.8          
-## [117] ggbeeswarm_0.6.0</code></pre>
+##   [1] VGAM_1.1-5                systemfonts_1.0.1        
+##   [3] plyr_1.8.6                igraph_1.2.6             
+##   [5] splines_4.0.3             BiocParallel_1.24.1      
+##   [7] densityClust_0.3          fastICA_1.2-2            
+##   [9] digest_0.6.27             foreach_1.5.1            
+##  [11] htmltools_0.5.1.1         viridis_0.5.1            
+##  [13] fansi_0.4.2               magrittr_2.0.1           
+##  [15] memoise_2.0.0             tensor_1.5               
+##  [17] cluster_2.1.1             limma_3.46.0             
+##  [19] recipes_0.1.15            gower_0.2.2              
+##  [21] docopt_0.7.1              pkgdown_1.6.1            
+##  [23] colorspace_2.0-0          ggrepel_0.9.1            
+##  [25] textshaping_0.3.1         xfun_0.21                
+##  [27] hexbin_1.28.2             sparsesvd_0.2            
+##  [29] crayon_1.4.1              RCurl_1.98-1.2           
+##  [31] jsonlite_1.7.2            spatstat_1.64-1          
+##  [33] spatstat.data_2.0-0       survival_3.2-7           
+##  [35] iterators_1.0.13          ape_5.4-1                
+##  [37] glue_1.4.2                polyclip_1.10-0          
+##  [39] gtable_0.3.0              ipred_0.9-9              
+##  [41] zlibbioc_1.36.0           XVector_0.30.0           
+##  [43] DelayedArray_0.16.1       Ecume_0.9.0              
+##  [45] BiocSingular_1.6.0        kernlab_0.9-29           
+##  [47] abind_1.4-5               scales_1.1.1             
+##  [49] DBI_1.1.1                 edgeR_3.32.1             
+##  [51] Rcpp_1.0.6                viridisLite_0.3.0        
+##  [53] rsvd_1.0.3                lava_1.6.8.1             
+##  [55] prodlim_2019.11.13        FNN_1.1.3                
+##  [57] ellipsis_0.3.1            farver_2.0.3             
+##  [59] scuttle_1.0.4             pkgconfig_2.0.3          
+##  [61] deldir_0.2-10             nnet_7.3-15              
+##  [63] sass_0.3.1                locfit_1.5-9.4           
+##  [65] utf8_1.1.4                labeling_0.4.2           
+##  [67] tidyselect_1.1.0          rlang_0.4.10             
+##  [69] reshape2_1.4.4            munsell_0.5.0            
+##  [71] tools_4.0.3               cachem_1.0.4             
+##  [73] generics_0.1.0            evaluate_0.14            
+##  [75] stringr_1.4.0             fastmap_1.1.0            
+##  [77] goftest_1.2-2             yaml_2.2.1               
+##  [79] ragg_1.1.1                transport_0.12-2         
+##  [81] ModelMetrics_1.2.2.2      fs_1.5.0                 
+##  [83] DDRTree_0.1.5             randomForest_4.6-14      
+##  [85] purrr_0.3.4               RANN_2.6.1               
+##  [87] sparseMatrixStats_1.2.1   pbapply_1.4-3            
+##  [89] nlme_3.1-152              monocle_2.18.0           
+##  [91] slam_0.1-48               compiler_4.0.3           
+##  [93] beeswarm_0.2.3            e1071_1.7-4              
+##  [95] spatstat.utils_2.0-0      tibble_3.1.0             
+##  [97] bslib_0.2.4               stringi_1.5.3            
+##  [99] highr_0.8                 desc_1.2.0               
+## [101] Matrix_1.3-2              HSMMSingleCell_1.10.0    
+## [103] vctrs_0.3.6               pillar_1.5.0             
+## [105] lifecycle_1.0.0           combinat_0.0-8           
+## [107] jquerylib_0.1.3           BiocNeighbors_1.8.2      
+## [109] data.table_1.14.0         bitops_1.0-6             
+## [111] irlba_2.3.3               R6_2.5.0                 
+## [113] gridExtra_2.3             vipor_0.4.5              
+## [115] codetools_0.2-18          MASS_7.3-53.1            
+## [117] assertthat_0.2.1          rprojroot_2.0.2          
+## [119] withr_2.4.1               qlcMatrix_0.9.7          
+## [121] GenomeInfoDbData_1.2.4    mgcv_1.8-34              
+## [123] beachmat_2.6.4            grid_4.0.3               
+## [125] rpart_4.1-15              timeDate_3043.102        
+## [127] class_7.3-18              DelayedMatrixStats_1.12.3
+## [129] rmarkdown_2.7             Rtsne_0.15               
+## [131] pROC_1.17.0.1             lubridate_1.7.9.2        
+## [133] ggbeeswarm_0.6.0</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
+<div id="refs" class="references hanging-indent">
 <div id="ref-Street2018a">
 <p>Street, Kelly, Davide Risso, Russell B. Fletcher, Diya Das, John Ngai, Nir Yosef, Elizabeth Purdom, and Sandrine Dudoit. 2018. “Slingshot: cell lineage and pseudotime inference for single-cell transcriptomics.” <em>BMC Genomics</em> 19 (1): 477. <a href="https://doi.org/10.1186/s12864-018-4772-0">https://doi.org/10.1186/s12864-018-4772-0</a>.</p>
 </div>
@@ -677,7 +717,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

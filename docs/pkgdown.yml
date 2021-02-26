@@ -1,5 +1,5 @@
-pandoc: '2.5'
-pkgdown: 1.5.1
+pandoc: 2.9.2.1
+pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   Examples: Examples.html
@@ -7,7 +7,7 @@ articles:
   Simulations: Simulations.html
   TCDD: TCDD.html
   TGFB: TGFB.html
-last_built: 2021-02-18T17:29Z
+last_built: 2021-02-26T19:47Z
 urls:
   reference: http://hectorrdb.github.io//condimentspPaper/reference
   article: http://hectorrdb.github.io//condimentspPaper/articles
