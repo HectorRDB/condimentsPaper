@@ -1,6 +1,6 @@
 Package: condimentsPaper
 Title: Package to accompany the condiments Paper
-Version: 0.0.0.9000
+Version: 1.0
 Authors@R: 
     c(person("Hector", "Roux de Bezieux", role = c("aut", "cre"),
                      email = "hector.rouxdebezieux@berkeley.edu",

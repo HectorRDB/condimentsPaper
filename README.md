@@ -1,4 +1,4 @@
-<a href='https://hectorrdb.github.io/condiments'><img src='vignettes/sticker.png' align="right" height="138.5"/></a>
+<img src='man/figures/logo.png' align="right" height="138.5"/>
 
 # condimentsPaper
 
