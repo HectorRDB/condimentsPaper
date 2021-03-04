@@ -288,13 +288,14 @@ df <- df %>%
          Panel = factor(Panel, levels = unique(Panel)),
          label = if_else(is.na(value), "NA", as.character(value)))
 p <- ggplot(df, aes(x = test_type, y = metric, label = label,
-               fill = scaled)) +
+               fill = as.numeric(label))) +
   geom_tile() +
   geom_text(na.rm = FALSE) +
   scale_fill_viridis_c() +
   scale_x_discrete(labels = c("progressionTest", "differentationTest", "DAseq",
                               "milo")) +
-  labs(x = "", y = "", fill = "(Value - 1)\n") +
+  labs(x = "", y = "", fill = "") +
+  guides(fill = FALSE) +
   facet_grid(Panel ~ ., switch = "y", labeller = labeller(Panel = labs_pct)) +
   theme(axis.text.x = element_text(size = 14, angle = -20, vjust = .2)) + 
   theme(legend.position =  "right",
