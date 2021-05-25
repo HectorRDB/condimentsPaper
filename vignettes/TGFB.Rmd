@@ -129,7 +129,7 @@ topologyTest(SlingshotDataSet(tgfb), tgfb$pheno$treatment_id, rep = 100,
 ```{r plotSlingshot}
 df <- bind_cols(
   as.data.frame(reducedDims(tgfb)$UMAP),
-  as.data.frame(colData(tgfb))
+  as.data.frame(colData(tgfb)[,-3])
   ) %>%
   sample_frac(1)
 curve <- slingCurves(tgfb)[[1]]
@@ -183,11 +183,9 @@ icMat <- evaluateK(counts = as.matrix(assays(tgfb)$counts),
 
 ```{r, eval=FALSE}
 set.seed(3)
-tgfb <- fitGAM(counts = as.matrix(assays(tgfb)$counts),
-               pseudotime = colData(tgfb)$slingshot$pseudotime,
-               cellWeights = colData(tgfb)$slingshot$cellWeights.V1,
+tgfb2 <- fitGAM(counts = tgfb, nknots = 5,
                conditions = factor(colData(tgfb)$pheno$treatment_id),
-               nknots = 5)
+               )
 mean(rowData(tgfb)$tradeSeq$converged)
 ```
 

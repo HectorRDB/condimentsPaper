@@ -113,11 +113,9 @@ plot_reduced_dim_together <- function(sce) {
 plot_example <- function(sd_ko, mst_ko, sd_wt, mst_wt, title, colors) {
   p <- ggplot(mapping = aes(x = Dim1, y = Dim2, col = conditions)) +
     geom_point(data = mst_wt, size = 4) +
-    geom_path(data = mst_wt %>% dplyr::filter(Dim2 >= 0), size = 1.5) +
-    geom_path(data = mst_wt %>% dplyr::filter(Dim2 <= 0), size = 1.5) +
+    geom_path(data = mst_wt, mapping = aes(group = lineages), size = 1.5) +
     geom_point(data = mst_ko, size = 4) +
-    geom_path(data = mst_ko %>% dplyr::filter(Dim2 >= 0), size = 1.5) +
-    geom_path(data = mst_ko %>% dplyr::filter(Dim2 <= 0), size = 1.5) +
+    geom_path(data = mst_ko, mapping = aes(group = lineages), size = 1.5) +
     geom_point(data = sd_wt, alpha = .4) +
     geom_point(data = sd_ko %>% dplyr::filter(conditions == "B"), alpha = .8) +
     theme_classic() +
