@@ -9,7 +9,7 @@ anayze_all(sce, shape = 2)
 \arguments{
 \item{sce}{The dataset, a SingleCellExperiment object}
 
-\item{shape}{Number of lineages (2 or 3)}
+\item{shape}{Number of lineages (2, 3 or 5)}
 }
 \description{
 Analyse dataset with two conditions

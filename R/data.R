@@ -102,7 +102,18 @@
 #' Simulated dataset with one bifurcation and three conditions
 #'
 #' @source
-#' Created by running "fork_sce <- create_bifurcating_three_conditions_simu(multiplier = .5)"
+#' Created by running "complex_sce <- create_bifurcating_three_conditions_simu(multiplier = .5)"
 #' @usage data(complex_sce)
 #' @format A \link[SingleCellExperiment]{SingleCellExperiment} object
 "complex_sce"
+
+#' A \link[SingleCellExperiment]{SingleCellExperiment} example of 5 lineages and
+#'  two conditions dataset
+#'
+#' Simulated dataset with 5 lineages and two conditions
+#'
+#' @source
+#' Created by running "fivelin_sce <- create_5_lineages_simu(multiplier = .5)"
+#' @usage data(fivelin_sce)
+#' @format A \link[SingleCellExperiment]{SingleCellExperiment} object
+"fivelin_sce"

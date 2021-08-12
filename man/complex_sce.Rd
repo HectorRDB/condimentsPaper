@@ -8,7 +8,7 @@
 A \link[SingleCellExperiment]{SingleCellExperiment} object
 }
 \source{
-Created by running "fork_sce <- create_bifurcating_three_conditions_simu(multiplier = .5)"
+Created by running "complex_sce <- create_bifurcating_three_conditions_simu(multiplier = .5)"
 }
 \usage{
 data(complex_sce)

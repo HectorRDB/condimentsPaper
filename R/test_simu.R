@@ -1,9 +1,9 @@
-.milo_analysis <- function(sce) {
+.milo_analysis <- function(sce, d = 3) {
   logcounts(sce) <- log1p(counts(sce))
   milo <- Milo(sce)
-  milo <- buildGraph(milo, reduced.dim = "dimred", d = 3, BPPARAM = SerialParam(),
+  milo <- buildGraph(milo, reduced.dim = "dimred", d = d, BPPARAM = SerialParam(),
                      k = 20)
-  milo <- makeNhoods(milo, refined = TRUE, reduced_dims = "dimred", d = 3)
+  milo <- makeNhoods(milo, refined = TRUE, reduced_dims = "dimred", d = d)
   # We simulate replicate in each condition, similar to
   # https://github.com/MarioniLab/milo_analysis_2020/blob/a84308a01675c4b4daae0fddddbd1ada70679f9b/notebooks/SFig2_batch_effect_simulation.Rmd#L52
   milo$Sample <- sample(1:5, ncol(sce), replace = TRUE)
@@ -15,35 +15,130 @@
   milo$Sample <- as.character(milo$Sample)
   milo <- miloR::countCells(milo, meta.data = data.frame(colData(milo)),
                             sample = "Sample")
-  milo <- calcNhoodDistance(x = milo, d = 3, reduced.dim = "dimred")
-  da_results <- testNhoods(milo, design = ~ condition,
-                           design.df = colData(milo) %>%
-                             as.data.frame() %>%
-                             select(condition, Sample) %>%
-                             distinct())
-  da_results <- da_results %>% dplyr::slice_min(SpatialFDR, 1, with_ties = FALSE)
+  milo <- calcNhoodDistance(x = milo, d = d, reduced.dim = "dimred")
+  design.df <- colData(milo) %>%
+    as.data.frame() %>%
+    select(condition, Sample) %>%
+    distinct()
+  rownames(design.df) <- design.df$Sample
+  da_results <- testNhoods(milo, design = ~ condition, design.df = design.df)
+  da_results <- da_results %>% dplyr::slice_min(SpatialFDR, n = 1, with_ties = FALSE)
   return(da_results)
 }
 
 .running_slingshot <- function(sce, shape = 2) {
-  if (shape == 2) {
-    ends <- c("sC", 'sD')
+  if (shape == 5) {
+    ends <- c('sF', 'sG', 'sH', 'sJ', 'sK')
+    clusters <- str_remove(sce$from, "mid")
+    sds <- slingshot(reducedDim(sce), clusters, start.clus = "sA",
+                     end.clus = ends, approx_points = 100, stretch = 1)
+    
   } else {
-    ends <- c('sE', "sF", "sG")
+    if (shape == 2) {
+      ends <- c("sC", 'sD')
+    } else {
+      ends <- c('sE', "sF", "sG")
+    }
+    sds <- slingshot(reducedDim(sce), sce$from, start.clus = "sA",
+                     end.clus = ends, approx_points = 100, stretch = 1)
   }
-
-  sds <- slingshot(reducedDim(sce), sce$from, start.clus = "sA",
-                   end.clus = ends, approx_points = 100, stretch = 1)
   return(sds)
+}
+
+.running_monocle <- function(sce, clusters, start = 1,
+                             params = list(orthogonal_proj_tip = TRUE)) {
+  colnames(sce) <- paste0("Cell-", seq_len(ncol(sce)))
+  names(clusters) <- colnames(sce)
+  fd <- data.frame(gene_short_name = rownames(sce))
+  rownames(fd) <- rownames(sce)
+  pd <- data.frame(cellid = colnames(sce))
+  rownames(pd) <- colnames(sce)
+  cds <- new_cell_data_set(counts(sce), cell_metadata = pd, gene_metadata = fd)
+  cds <- cds[,Matrix::colSums(exprs(cds)) != 0]
+  cds <- estimate_size_factors(cds)
+  cds <- preprocess_cds(cds, num_dim = 100)
+  cds <- reduce_dimension(cds)
+  cds@int_colData$reducedDims$UMAP <- reducedDim(sce[,colnames(cds)])
+  cds <- cluster_cells(cds)
+  partitions <- cds@clusters$UMAP$clusters <- clusters[colnames(cds)]
+  partitions[colnames(cds)] <- 1
+  cds@clusters$UMAP$partitions <- partitions %>% 
+    as.factor() %>%
+    droplevels()
+  cds <- learn_graph(cds, learn_graph_control = params,
+                     close_loop = FALSE)
+  cds <- order_cells(cds, root_cells = colnames(cds)[clusters == start])
+  plot_cells(cds)
+  mst <- principal_graph(cds)$UMAP
+  roots <- cds@principal_graph_aux$UMAP$root_pr_nodes
+  # Get the other endpoints
+  endpoints <- names(which(igraph::degree(mst) == 1))
+  root <- endpoints[endpoints %in% roots]
+  endpoints <- endpoints[!endpoints %in% roots]
+  # See https://cole-trapnell-lab.github.io/monocle3/docs/trajectories/#subset-branch
+  cellWeights <- lapply(endpoints, function(endpoint) {
+    # We find the path between the endpoint and the root
+    path <- choose_graph_segments(cds, ending_pr_nodes = endpoint, 
+                                  starting_pr_node = root, return_list = TRUE)
+    # We find the cells that map along that path
+    df <- data.frame(weights = as.numeric(colnames(cds) %in% path$cells))
+    colnames(df) <- endpoint
+    return(df)
+  }) %>% do.call(what = 'cbind', args = .) %>%
+    as.matrix()
+  rownames(cellWeights) <- colnames(cds)
+  pseudotime <- matrix(pseudotime(cds), ncol = ncol(cellWeights),
+                       nrow = ncol(cds), byrow = FALSE)
+  colnames(pseudotime) <- colnames(cellWeights)
+  return(list("pseudotime" = pseudotime,
+              "cellWeights" = cellWeights,
+              "conditions" = sce[, colnames(cds)]$condition))
 }
 
 .condiments_analysis <- function(sce, shape = 2) {
   sds <- .running_slingshot(sce, shape)
+  # clusters
+  clusters <- sce$from %>% 
+    str_remove("mid") %>% 
+    as.factor() %>% 
+    as.numeric() %>% 
+    as.factor()
+  names(clusters) <- colnames(sce)
+  # monocle
+  cds <- .running_monocle(sce, clusters)
   vals <- bind_rows(
-    "prog" = progressionTest(sds, sce$condition, thresh = .01),
-    "diff" = differentiationTest(sds, sce$condition, method = "Classifier",
-                                 args_classifier = list(method = "rf"), thresh = .01),
+    "sling_prog" = progressionTest(sds, sce$condition, thresh = .01),
+    "mon_prog" = progressionTest(pseudotime = cds$pseudotime, 
+                                 cellWeights = cds$cellWeights,
+                                 conditions = cds$condition, thresh = .01),
+    "sling_diff" = differentiationTest(sds, sce$condition, method = "Classifier",
+                                       args_classifier = list(method = "rf"), thresh = .01),
     .id = "test_type"
+  )
+  vals$nLineages <- c(nLineages(sds),
+                      ncol(cds$cellWeights),
+                      nLineages(sds)
+  )
+  return(vals)
+}
+
+.condiments_analysis_per_cond <- function(sce, shape = 2) {
+  # Sling
+  sds <- .running_slingshot(sce, shape)
+  sdss <- slingshot_conditions(sds, sce$condition)
+  n <- nLineages(sdss[[1]])
+  sds <- merge_sds(sdss[[1]], sdss[[2]], condition_id = names(sdss),
+                   mapping = matrix(1:n, nrow = n, ncol = 2))
+  vals <- bind_rows(
+    "sling_prog" = progressionTest(sds, sce$condition, thresh = .05),
+    "sling_diff" = differentiationTest(sds, sce$condition,
+                                       method = "Classifier",
+                                       args_classifier = list(method = "rf"),
+                                       thresh = .01),
+    .id = "test_type"
+  )
+  vals$nLineages <- c(mean(nLineages(sdss[[1]]), nLineages(sdss[[2]])),
+                      mean(nLineages(sdss[[1]]), nLineages(sdss[[2]]))
   )
   return(vals)
 }
@@ -104,15 +199,14 @@
                   "p.value" = "pval.wilcoxon") %>%
     mutate(test_type = paste0("region", rownames(.))) %>%
     select(test_type, FDR, p.value, statistic)
-  return(da_regions %>% dplyr::slice_min(FDR, 1, with_ties = FALSE))
+  return(da_regions %>% dplyr::slice_min(FDR, n = 1, with_ties = FALSE))
 }
-
 
 #' @title Analyse dataset with two conditions
 #' @param sce The dataset, a SingleCellExperiment object
-#' @param shape Number of lineages (2 or 3)
+#' @param shape Number of lineages (2, 3 or 5)
 #' @export
-#' @import miloR DAseq slingshot dplyr SingleCellExperiment
+#' @import miloR DAseq slingshot dplyr SingleCellExperiment monocle3
 #' @importFrom cydar spatialFDR
 #' @importFrom matrixStats colMedians
 anayze_all <- function(sce, shape = 2) {
@@ -140,7 +234,7 @@ anayze_all <- function(sce, shape = 2) {
 #' @param sce The dataset, a SingleCellExperiment object
 #' @param shape Number of lineages (2 or 3)
 #' @export
-#' @import miloR slingshot dplyr SingleCellExperiment
+#' @import miloR slingshot dplyr SingleCellExperiment monocle3
 anayze_multiple_conditions <- function(sce) {
   res <- tryCatch({suppressMessages(
     suppressWarnings(
@@ -161,3 +255,25 @@ anayze_multiple_conditions <- function(sce) {
   return(res)
 }
 
+#' @title Analyse dataset with common and separate trajectories per condition
+#' @param sce The dataset, a SingleCellExperiment object
+#' @param shape Number of lineages (2, 3 or 5.)
+#' @export
+#' @import slingshot dplyr SingleCellExperiment monocle3
+anayze_all_per_cond <- function(sce, shape = 2) {
+  res <- tryCatch({suppressMessages(
+    suppressWarnings(
+      bind_rows(
+        "normal" = .condiments_analysis(sce, shape = 2) %>%
+          select(-lineage, -pair),
+        "failure" = .condiments_analysis_per_cond(sce, shape = 2) %>%
+          select(-lineage, -pair),
+        .id = "method"
+      )
+    )
+  )}, error = function(cond) {
+    print(cond)
+    return(sce)
+  })
+  return(res)
+}
