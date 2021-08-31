@@ -44,6 +44,21 @@
 #' @usage data(kras)
 "kras"
 
+#' A \link[SingleCellExperiment]{SingleCellExperiment} object
+#'
+#' This dataset contains all the information used for the fibrosis case study
+#'
+#' @references
+#' Jenny Y. Xue, Yulei Zhao, Jordan Aronowitz, Trang T. Mai, Alberto Vides,
+#' Besnik Qeriqi, Dongsung Kim, Chuanchuan Li, Elisa de Stanchina, Linas Mazutis,
+#'  Davide Risso, and Piro Lito.
+#' *Rapid non-uniform adaptation to conformation-specific KRAS(G12C) inhibition.*
+#' Nature, 577(7790):421–425,jan  2020. ISSN  14764687. doi: 10.1038/s41586-019-1884-x
+#' @source
+#' See the fibrosis vignette to generate this data
+#' @usage data(fibrosis)
+"fibrosis"
+
 #' Results on the one bifurcation and two conditions datasets
 #'
 #' This dataset contains all the results from the simulation on the datasets
