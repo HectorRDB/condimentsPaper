@@ -46,7 +46,8 @@
 }
 
 .running_monocle <- function(sce, clusters, start = 1,
-                             params = list(orthogonal_proj_tip = TRUE)) {
+                             params = list(orthogonal_proj_tip = TRUE),
+                             keep_cds = FALSE) {
   colnames(sce) <- paste0("Cell-", seq_len(ncol(sce)))
   names(clusters) <- colnames(sce)
   fd <- data.frame(gene_short_name = rownames(sce))
@@ -90,9 +91,13 @@
   pseudotime <- matrix(pseudotime(cds), ncol = ncol(cellWeights),
                        nrow = ncol(cds), byrow = FALSE)
   colnames(pseudotime) <- colnames(cellWeights)
-  return(list("pseudotime" = pseudotime,
+  res <- list("pseudotime" = pseudotime,
               "cellWeights" = cellWeights,
-              "conditions" = sce[, colnames(cds)]$condition))
+              "conditions" = sce[, colnames(cds)]$condition)
+  if(keep_cds) {
+    res$cds <- cds
+  }
+  return(res)
 }
 
 .condiments_analysis <- function(sce, shape = 2) {
