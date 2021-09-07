@@ -14,6 +14,23 @@
 #' @usage data(tgfb)
 "tgfb"
 
+#' A \link[data.frame]{data.frame} object
+#'
+#' This contains the output of running the \link[tradeSeq]{conditionTest} on
+#' the \link{tgfb} dataset after running \link{monocle3}.
+#'
+#' #' @references
+#' Jos\'{e}  L.  McFaline-Figueroa,  Andrew  J.  Hill,  Xiaojie  Qiu,
+#' Dana  Jackson,  Jay  Shendure,  and  Cole Trapnell.
+#' *A pooled single-cell genetic screen identifies regulatory checkpoints in *
+#' *the continuum of the epithelial-to-mesenchymal transition.*
+#' Nature Genetics, 51(9):1389–1398, sep 2019.  ISSN 15461718.
+#' doi:  10.1038/s41588-019-0489-5.
+#' @source
+#' See the TGFB vignette to generate this data
+#' @usage data(condRes_monocle)
+"condRes_monocle"
+
 #' A \link[SingleCellExperiment]{SingleCellExperiment} object
 #'
 #' This dataset contains all the information used for the TCDD case studies
@@ -49,11 +66,15 @@
 #' This dataset contains all the information used for the fibrosis case study
 #'
 #' @references
-#' Jenny Y. Xue, Yulei Zhao, Jordan Aronowitz, Trang T. Mai, Alberto Vides,
-#' Besnik Qeriqi, Dongsung Kim, Chuanchuan Li, Elisa de Stanchina, Linas Mazutis,
-#'  Davide Risso, and Piro Lito.
-#' *Rapid non-uniform adaptation to conformation-specific KRAS(G12C) inhibition.*
-#' Nature, 577(7790):421–425,jan  2020. ISSN  14764687. doi: 10.1038/s41586-019-1884-x
+#' Arun  C.  Habermann,  Austin  J.  Gutierrez,  Linh  T.  Bui,  
+#' Stephanie  L. Yahn,  Nichelle  I.  Winters, Carla L. Calvi, Lance Peter, 
+#' Mei I. Chung, Chase J. Taylor, Christopher Jetter, Latha Raju, Jamie Roberson,
+#'  Guixiao Ding, Lori Wood, Jennifer M.S. Sucre, Bradley W. Richmond, Ana P. Serezani,
+#'  Wyatt J. McDonnell,  Simon B. Mallal,  Matthew J. Bacchetta,  James E. Loyd,
+#'  Ciara M. Shaver,Lorraine B. Ware,  Ross Bremner,  Rajat Walia,  
+#'  Timothy S. Blackwell,  Nicholas E. Banovich,  and Jonathan A. Kropski.
+#' *Single-cell rna sequencing reveals profibrotic roles of distinct epithelial and mesenchymal  lineages  in  pulmonary  fibrosis*
+#' Science  Advances,  6,  2020.   ISSN  23752548.   doi:10.1126/sciadv.aba1972.
 #' @source
 #' See the fibrosis vignette to generate this data
 #' @usage data(fibrosis)

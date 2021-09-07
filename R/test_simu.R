@@ -1,37 +1,37 @@
-.milo_analysis <- function(sce, d = 3) {
+.milo_analysis <- function(sce) {
   logcounts(sce) <- log1p(counts(sce))
   milo <- Milo(sce)
-  milo <- buildGraph(milo, reduced.dim = "dimred", d = d, BPPARAM = SerialParam(),
+  milo <- buildGraph(milo, reduced.dim = "dimred", d = 3, BPPARAM = SerialParam(),
                      k = 20)
-  milo <- makeNhoods(milo, refined = TRUE, reduced_dims = "dimred", d = d)
-  # We simulate replicate in each condition, similar to
+  milo <- makeNhoods(milo, refined = TRUE, reduced_dims = "dimred", d = 3)
+  # We simulate replicate in each condition, similar to 
   # https://github.com/MarioniLab/milo_analysis_2020/blob/a84308a01675c4b4daae0fddddbd1ada70679f9b/notebooks/SFig2_batch_effect_simulation.Rmd#L52
   milo$Sample <- sample(1:5, ncol(sce), replace = TRUE)
   for (i in seq_along(unique(sce$condition))) {
     cond <- unique(sce$condition)[i]
-    milo$Sample[milo$condition == cond] <-
+    milo$Sample[milo$condition == cond] <- 
       milo$Sample[sce$condition == cond] + 5 * (i - 1)
   }
   milo$Sample <- as.character(milo$Sample)
   milo <- miloR::countCells(milo, meta.data = data.frame(colData(milo)),
                             sample = "Sample")
-  milo <- calcNhoodDistance(x = milo, d = d, reduced.dim = "dimred")
-  design.df <- colData(milo) %>%
-    as.data.frame() %>%
-    select(condition, Sample) %>%
-    distinct()
-  rownames(design.df) <- design.df$Sample
-  da_results <- testNhoods(milo, design = ~ condition, design.df = design.df)
+  milo <- calcNhoodDistance(x = milo, d = 3, reduced.dim = "dimred")
+  da_results <- testNhoods(milo, design = ~ condition,
+                           design.df = colData(milo) %>%
+                             as.data.frame() %>%
+                             select(condition, Sample) %>%
+                             distinct())
   da_results <- da_results %>% dplyr::slice_min(SpatialFDR, n = 1, with_ties = FALSE)
   return(da_results)
 }
 
+
 .running_slingshot <- function(sce, shape = 2) {
   if (shape == 5) {
-    ends <- c('sF', 'sG', 'sH', 'sJ', 'sK')
+    ends <- c('sD', 'sF', 'sG', 'sH', 'sI')
     clusters <- str_remove(sce$from, "mid")
     sds <- slingshot(reducedDim(sce), clusters, start.clus = "sA",
-                     end.clus = ends, approx_points = 100, stretch = 1)
+                     end.clus = ends)
     
   } else {
     if (shape == 2) {
@@ -44,6 +44,7 @@
   }
   return(sds)
 }
+
 
 .running_monocle <- function(sce, clusters, start = 1,
                              params = list(orthogonal_proj_tip = TRUE),
@@ -100,8 +101,9 @@
   return(res)
 }
 
+
 .condiments_analysis <- function(sce, shape = 2) {
-  sds <- .running_slingshot(sce, shape)
+  sds <- running_slingshot(sce, shape)
   # clusters
   clusters <- sce$from %>% 
     str_remove("mid") %>% 
@@ -110,18 +112,26 @@
     as.factor()
   names(clusters) <- colnames(sce)
   # monocle
-  cds <- .running_monocle(sce, clusters)
+  cds <- running_monocle(sce, clusters)
   vals <- bind_rows(
-    "sling_prog" = progressionTest(sds, sce$condition, thresh = .01),
+    "sling_prog" = progressionTest(sds, sce$condition, thresh = .01, 
+                                   lineages = TRUE, global = FALSE),
     "mon_prog" = progressionTest(pseudotime = cds$pseudotime, 
                                  cellWeights = cds$cellWeights,
-                                 conditions = cds$condition, thresh = .01),
+                                 conditions = cds$condition, thresh = .01,
+                                 lineages = TRUE, global = FALSE),
     "sling_diff" = differentiationTest(sds, sce$condition, method = "Classifier",
-                                       args_classifier = list(method = "rf"), thresh = .01),
+                                       args_classifier = list(method = "rf"), thresh = .01,
+                                       pairwise = TRUE, global = FALSE),
     .id = "test_type"
-  )
-  vals$nLineages <- c(nLineages(sds),
-                      ncol(cds$cellWeights),
+  ) %>%
+    group_by(test_type) %>%
+    mutate(FDR = p.adjust(p.value, method = "BH")) %>%
+    dplyr::slice_min(FDR, n = 1, with_ties = FALSE) %>%
+    arrange(test_type)
+  
+  vals$nLineages <- c(ncol(cds$cellWeights),
+                      nLineages(sds),
                       nLineages(sds)
   )
   return(vals)
@@ -129,19 +139,24 @@
 
 .condiments_analysis_per_cond <- function(sce, shape = 2) {
   # Sling
-  sds <- .running_slingshot(sce, shape)
+  sds <- running_slingshot(sce, shape)
   sdss <- slingshot_conditions(sds, sce$condition)
   n <- nLineages(sdss[[1]])
   sds <- merge_sds(sdss[[1]], sdss[[2]], condition_id = names(sdss),
                    mapping = matrix(1:n, nrow = n, ncol = 2))
   vals <- bind_rows(
-    "sling_prog" = progressionTest(sds, sce$condition, thresh = .05),
+    "sling_prog" = progressionTest(sds, sce$condition, thresh = .05, 
+                                   lineages = TRUE, global = FALSE),
     "sling_diff" = differentiationTest(sds, sce$condition,
                                        method = "Classifier",
                                        args_classifier = list(method = "rf"),
-                                       thresh = .01),
+                                       thresh = .01, 
+                                       pairwise = TRUE, global = FALSE),
     .id = "test_type"
-  )
+  ) %>%
+    group_by(test_type) %>%
+    mutate(FDR = p.adjust(p.value, method = "BH")) %>%
+    dplyr::slice_min(FDR, n = 1, with_ties = FALSE)
   vals$nLineages <- c(mean(nLineages(sdss[[1]]), nLineages(sdss[[2]])),
                       mean(nLineages(sdss[[1]]), nLineages(sdss[[2]]))
   )
@@ -155,7 +170,7 @@
   sce$Sample[sce$condition == "WT"] <- sce$Sample[sce$condition == "WT"] + 10
   # sce$Sample <- sce$condition
   sce$Sample <- as.character(sce$Sample)
-  info <- colData(sce) %>%
+  info <- colData(sce) %>% 
     as.data.frame() %>%
     select(Sample, condition) %>%
     distinct()
@@ -194,11 +209,10 @@
     return(da_regions)
   }
   intensity <- sapply(rownames(da_regions) %>% as.numeric, function(label) {
-    matrixStats::colMedians(reducedDim(sce)[labels == label, ]) %>%
-      matrix(nrow = 1) %>%
+    colMedians(reducedDim(sce)[labels == label, ])  %>% matrix(nrow = 1) %>%
       return()
   }) %>% t()
-  da_regions$FDR <- cydar::spatialFDR(intensity, da_regions$pval.wilcoxon)
+  da_regions$FDR <- spatialFDR(intensity, da_regions$pval.wilcoxon)
   da_regions <- da_regions %>%
     dplyr::rename("statistic" = "DA.score",
                   "p.value" = "pval.wilcoxon") %>%
@@ -218,18 +232,18 @@ anayze_all <- function(sce, shape = 2) {
   res <- tryCatch({suppressMessages(
     suppressWarnings(
       bind_rows(
-        "condiments" = .condiments_analysis(sce, shape = 2) %>%
+        "condiments" = .condiments_analysis(sce, shape = shape) %>%
           select(-lineage, -pair),
         "DAseq" = .DAseq_analysis(sce),
         "milo" = .milo_analysis(sce) %>%
-          dplyr::select(PValue, FDR, SpatialFDR, `F`) %>%
+          select(PValue, FDR, SpatialFDR, `F`) %>%
           dplyr::rename("p.value" = PValue,
                         "statistic" = `F`),
         .id = "method"
-      )
+      ) %>% as.data.frame() %>%
+        return()
     )
   )}, error = function(cond) {
-    print(cond)
     return(sce)
   })
   return(res)
@@ -244,17 +258,16 @@ anayze_multiple_conditions <- function(sce) {
   res <- tryCatch({suppressMessages(
     suppressWarnings(
       bind_rows(
-        "condiments" = .condiments_analysis(sce, shape = 2) %>%
+        "condiments" = .condiments_analysis(sce, shape = shape) %>%
           select(-lineage, -pair),
         "milo" = .milo_analysis(sce) %>%
-          dplyr::select(PValue, FDR, SpatialFDR, `F`) %>%
+          select(PValue, FDR, SpatialFDR, `F`) %>%
           dplyr::rename("p.value" = PValue,
                         "statistic" = `F`),
         .id = "method"
       )
     )
   )}, error = function(cond) {
-    print(cond)
     return(sce)
   })
   return(res)
@@ -269,9 +282,9 @@ anayze_all_per_cond <- function(sce, shape = 2) {
   res <- tryCatch({suppressMessages(
     suppressWarnings(
       bind_rows(
-        "normal" = .condiments_analysis(sce, shape = 2) %>%
+        "normal" = .condiments_analysis(sce, shape = shape) %>%
           select(-lineage, -pair),
-        "failure" = .condiments_analysis_per_cond(sce, shape = 2) %>%
+        "failure" = .condiments_analysis_per_cond(sce, shape = shape) %>%
           select(-lineage, -pair),
         .id = "method"
       )

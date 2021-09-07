@@ -1,0 +1,343 @@
+---
+title: 'Analysis of the Fibrosis datataset'
+author: "Hector Roux de Bézieux"
+bibliography: ref.bib
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Analysis of the Fibrosis dataset}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r packages, include=F}
+library(knitr)
+opts_chunk$set(
+  fig.pos = "!h", out.extra = "", warning = F, 
+  fig.align = "center"
+)
+```
+
+# Load data
+
+The dataset we will be working with concerns a single-cell RNA-sequencing dataset consisting of three cancer models under a  KRAS(G12C) inhibition [@Xue2020].
+
+```{r}
+libs <- c("here", "tidyr", "dplyr", "Seurat", "scater", "slingshot", "cowplot",
+          "condiments", "ggplot2", "readr", "tradeSeq",  "pheatmap", "fgsea",
+          "msigdbr", "scales")
+suppressMessages(
+  suppressWarnings(sapply(libs, require, character.only = TRUE))
+)
+rm(libs)
+theme_set(theme_classic() +
+            theme(rect = element_blank(),
+                  plot.background = element_blank(),
+                  strip.background = element_rect(fill = "transparent")
+                  ))
+```
+
+```{r, eval = FALSE}
+kras <- condimentsPaper::import_fibrosis()
+```
+
+```{r}
+data("fibrosis", package = "condimentsPaper")
+```
+
+# EDA
+
+Reduced dimension coordinates are obtained from the original publication.
+
+```{r}
+df <- bind_cols(reducedDim(sce, "UMAP") %>% as.data.frame(),
+                colData(sce)[, 1:14] %>% as.data.frame())
+ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = Status)) +
+  geom_point(size = .5) +
+  scale_color_brewer(palette = "Accent") +
+  labs(col = "Disease") +
+  theme(legend.position = c(.15, .4),
+        legend.background = element_blank()) +
+  guides(col = guide_legend(override.aes = list(size = 3)))
+ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = celltype)) +
+  geom_point(size = .5) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(col = "Cell Type") +
+  theme(legend.position = c(.2, .4),
+        legend.background = element_blank()) +
+  guides(col = guide_legend(override.aes = list(size = 3)))
+```
+
+# Imbalance score
+
+```{r}
+scores <- condiments::imbalance_score(
+  Object = df %>% select(UMAP_1, UMAP_2) %>% as.matrix(), 
+  conditions = df$Status, k = 20, smooth = 30)
+df$scores <- scores$scaled_scores
+ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = scores)) +
+  geom_point(size = .7) +
+  scale_color_viridis_c(option = "C", breaks = c(0, 2, 4, 6)) +
+  labs(col = "Scores") +
+  theme(legend.position = c(.15, .4),
+        legend.background = element_blank())
+```
+
+# Differential Topology
+
+To estimate the trajectory, we use _slingshot_ [@Street2018a].
+
+## Fit slingshot
+
+```{r}
+sce <- slingshot(sce, reducedDim = 'UMAP',
+                 clusterLabels = colData(sce)$celltype,
+                 start.clus = 'AT1', approx_points = 100)
+```
+
+## Topology Test
+
+```{r}
+set.seed(821)
+topologyTest(SlingshotDataSet(sce), sce$Status)
+
+sce_SCGB3A2 <- slingshot(sce[, sce$celltype != "SCGB3A2+"],
+                         reducedDim = 'UMAP',
+            clusterLabels = colData(sce[, sce$celltype != "SCGB3A2+"])$celltype,
+                 start.clus = 'AT1', approx_points = 100)
+set.seed(821)
+topologyTest(SlingshotDataSet(sce_SCGB3A2), sce_SCGB3A2$Status)
+rm(sce_SCGB3A2)
+```
+
+## Separate trajectories 
+
+```{r}
+sdss <- slingshot_conditions(SlingshotDataSet(sce), sce$Status)
+curves <- bind_rows(lapply(sdss, slingCurves, as.df = TRUE),
+                    .id = "Status")
+
+p4a <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = Status)) +
+  geom_point(size = .7, alpha = .2) +
+  scale_color_brewer(palette = "Accent") +
+  labs(col = "Disaes") +
+  geom_path(data = curves %>% arrange(Status, Lineage, Order),
+            aes(group = interaction(Lineage, Status)), size = 1.5) +
+  annotate("text", x = -10, y = 6, label = "Lineage1", size = 5) +
+  annotate("text", x = -7, y = -2.7, label = "Lineage2", size = 5) +
+  theme(legend.position = c(.15, .35),
+        legend.background = element_blank()) +
+  NULL
+p4a
+```
+
+## Common trajectory
+
+```{r}
+df <- bind_cols(
+  as.data.frame(reducedDim(sce, "UMAP")),
+  slingPseudotime(sce) %>% as.data.frame() %>%
+    dplyr::rename_with(paste0, "_pst", .cols = everything()),
+  slingCurveWeights(sce) %>% as.data.frame(),
+  ) %>%
+  mutate(Lineage1_pst = if_else(is.na(Lineage1_pst), 0, Lineage1_pst),
+         Lineage2_pst = if_else(is.na(Lineage2_pst), 0, Lineage2_pst),
+         pst = if_else(Lineage1 > Lineage2, Lineage1_pst, Lineage2_pst),
+         pst = max(pst) - pst)
+curves <- slingCurves(sce, as.df = TRUE)
+ggplot(df, aes(x = UMAP_1, y = UMAP_2)) +
+  geom_point(size = .7, aes(col = pst)) +
+  scale_color_viridis_c() +
+  labs(col = "Pseudotime") +
+  geom_path(data = curves %>% arrange(Order),
+            aes(group = Lineage), col = "black", size = 1.5) +
+  annotate("text", x = -10, y = 6, label = "Lineage1", size = 5) +
+  annotate("text", x = -7, y = -2.7, label = "Lineage2", size = 5) +
+  theme(legend.position = c(.15, .35),
+        legend.background = element_blank()) 
+```
+
+# Differential Progression
+## Test
+
+```{r}
+progressionTest(sce, conditions = sce$Status, lineages = TRUE)
+```
+
+## Plot
+
+```{r}
+df <-  slingPseudotime(sce) %>% as.data.frame() 
+df$Status <- sce$Status
+df <- df %>% 
+  pivot_longer(-Status, names_to = "Lineage",
+               values_to = "pst") %>%
+  filter(!is.na(pst))
+ggplot(df, aes(x = pst)) +
+  geom_density(alpha = .8, aes(fill = Status), col = "transparent") +
+  geom_density(aes(col = Status), fill = "transparent", size = 1.5) +
+  labs(x = "Pseudotime", fill = "Status") +
+  facet_wrap(~Lineage, scales = "free_x") +
+  guides(col = "none", fill = guide_legend(
+    override.aes = list(size = 1.5, col = c("#7FC97F", "#BEAED4"))
+  )) +
+  scale_fill_brewer(palette = "Accent") +
+  scale_color_brewer(palette = "Accent") +
+  theme(legend.position = c(.8, .8), legend.direction = "horizontal")
+```
+
+# Differential Differentiation
+## Test
+
+```{r}
+differentiationTest(sce, conditions = sce$Status)
+```
+
+## Plot
+
+```{r}
+df <- slingCurveWeights(SlingshotDataSet(sce), as.probs = TRUE) %>% as.data.frame()
+df$Status <- sce$Status
+df <- df %>%
+  pivot_longer(-Status, names_to = "Lineage", values_to = "ws")
+ggplot(df, aes(x = ws)) +
+  geom_density(alpha = .8, aes(fill = Status), col = "transparent") +
+  geom_density(aes(col = Status), fill = "transparent", size = 1.5) +
+  labs(x = "Weights", fill = "Status") +
+  facet_wrap(~Lineage, scales = "free_x") +
+  guides(fill = "none", col = "none") +
+  scale_fill_brewer(palette = "Accent") +
+  scale_color_brewer(palette = "Accent")
+```
+
+# Differential expression
+
+We use _tradeSeq_ [@VandenBerge2020].
+
+## Select number of knots
+
+```{r evaluateK, eval = FALSE}
+library(tradeSeq)
+set.seed(3)
+BPPARAM <- BiocParallel::bpparam()
+BPPARAM$workers <- 3
+icMat <- evaluateK(counts = sce, sds = SlingshotDataSet(sce), 
+                   conditions = factor(sce$Status),
+                   nGenes = 300, parallel = TRUE, BPPARAM = BPPARAM, k = 3:7)
+```
+
+### Fit GAM
+
+Next, we fit the NB-GAMs using 6 knots, based on the pseudotime and cell-level weights estimated by Slingshot. We use the `conditions` argument to fit separate smoothers for each condition.
+
+```{r, eval = FALSE}
+library(tradeSeq)
+set.seed(3)
+sce <- fitGAM(counts = sce, conditions = factor(sce$Status), nknots = 6)
+```
+
+## Differential expression between conditions
+
+```{r, eval=TRUE}
+condRes <- conditionTest(sce, l2fc = log2(2), lineages = TRUE)
+condRes$padj <- p.adjust(condRes$pvalue_lineage1, "fdr")
+mean(condRes$padj <= 0.05, na.rm = TRUE)
+sum(condRes$padj <= 0.05, na.rm = TRUE)
+conditionGenes <- rownames(condRes)[condRes$padj <= 0.05]
+conditionGenes <- conditionGenes[!is.na(conditionGenes)]
+```
+
+## Differential expression between lineages
+
+```{r}
+patRes <- patternTest(sce, l2fc = log2(2))
+patRes$padj <- p.adjust(patRes$pvalue, "fdr")
+mean(patRes$padj <= 0.05, na.rm = TRUE)
+sum(patRes$padj <= 0.05, na.rm = TRUE)
+patternGenes <- rownames(patRes)[patRes$padj <= 0.05]
+patternGenes <- patternGenes[!is.na(patternGenes)]
+```
+
+### Visualize select genes from the og paper
+
+```{r, eval=TRUE}
+library(RColorBrewer)
+scales <- c("#FCAE91", "#DE2D26", "#BDD7E7", "#3182BD")
+
+# plot genes
+oo <- order(patRes$waldStat, decreasing = TRUE)
+genes <- c("SCGB3A2", "SFTPC", "ABCA3", "AGER")
+
+# most significant gene
+ps <- lapply(genes, function(gene){
+  plotSmoothers(sce, assays(sce)$counts, gene = gene, curvesCol = scales,
+                border = FALSE, sample = .2) +
+    scale_x_reverse(breaks = 0:4/.4, labels = 4:0/.4) +
+    labs(title = gene, col = "Lineage and Condition") +
+    scale_color_manual(values = scales) +
+    theme(plot.title = element_text(hjust = .5),
+          rect = element_blank())
+  }
+)
+legend_gene <- get_legend(
+  ps[[1]] + theme(legend.position = "bottom") +
+    guides(col = guide_legend(title.position = "top"))
+)
+ps <- lapply(ps, function(p) {p + guides(col = "none")})
+p6 <- plot_grid(
+  plot_grid(plotlist = ps, ncol = 2, scale = .95,
+            labels = c('a)', 'b)', 'c)', 'd)')),
+  plot_grid(NULL, legend_gene, NULL, rel_widths = c(1, 1, 1), ncol = 3), 
+  nrow = 2, rel_heights = c(4, .5)
+)
+```
+
+### Heatmaps of genes DE between lineages
+
+Below we show heatmaps of the genes DE between lineages The DE genes in the heatmaps are ordered according to a hierarchical clustering on the first lineage.
+
+```{r, eval=TRUE}
+### based on mean smoother
+yhatSmooth <- predictSmooth(sce, gene = patternGenes, nPoints = 50, tidy = TRUE) %>%
+  mutate(yhat = log1p(yhat)) %>%
+  group_by(gene) %>%
+  mutate(yhat = scales::rescale(yhat)) %>%
+  filter(condition == "ILD") %>%
+  select(-condition) %>%
+  ungroup()
+heatSmooth_Lineage1 <- pheatmap(
+  yhatSmooth %>%
+    filter(lineage == 1) %>%
+    select(-lineage) %>%
+    arrange(-time) %>%
+    pivot_wider(names_from = time, values_from = yhat) %>%
+    select(-gene),
+  cluster_cols = FALSE, show_rownames = FALSE, show_colnames = FALSE,
+  main = "Lineage 1", legend = FALSE, silent = TRUE
+)
+
+heatSmooth_Lineage2 <- pheatmap(
+  (yhatSmooth %>%
+    filter(lineage == 2) %>%
+    select(-lineage) %>%
+    arrange(-time) %>%
+    pivot_wider(names_from = time, values_from = yhat) %>%
+    select(-gene))[heatSmooth_Lineage1$tree_row$order, ],
+  cluster_cols = FALSE, cluster_rows = FALSE,
+  show_rownames = FALSE, show_colnames = FALSE, main = "Lineage 2",
+  legend = FALSE, silent = TRUE 
+)
+
+p7 <- plot_grid(heatSmooth_Lineage1[[4]], heatSmooth_Lineage2[[4]], ncol = 2)
+p7
+```
+
+# Session info 
+
+```{r}
+sessionInfo()
+```
+
+# References

@@ -1,4 +1,3 @@
-
 .create_sticker_image <- function(loc) {
   c1 <- condiments::create_differential_topology(shift = 0, noise = 0)$sd
   c2 <- c1 %>%

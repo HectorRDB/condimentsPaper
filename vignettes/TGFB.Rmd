@@ -21,9 +21,9 @@ We reproduce a lot of code from the [Bioc 2020 trajectory workshop](https://kstr
 The dataset we will be working with concerns a single-cell RNA-sequencing dataset consisting of two different experiments, which correspond to two treatments. McFaline-Figueroa et al. [@McFaline-Figueroa2019] studied the epithelial-to-mesenchymal transition (EMT), where cells spatially migrate from the epithelium to the mesenchyme during development.
 
 ```{r,include = FALSE}
-libs <- c("dplyr", "tradeSeq", "SingleCellExperiment", "slingshot",
+libs <- c("dplyr", "tradeSeq", "SingleCellExperiment", "slingshot", "tidyr",
           "Seurat", "ggplot2", "condiments", "pheatmap", "fgsea", "msigdbr",
-          "openxlsx")
+          "openxlsx", "monocle3", "miloR", "DAseq", "magrittr")
 suppressMessages(
   suppressWarnings(sapply(libs, require, character.only = TRUE))
 )
@@ -58,12 +58,15 @@ soTGFB <- SCTransform(soTGFB, verbose = FALSE)
 ### Integrate
 ########################
 dtlist <- list(Mock = soMock, TGFB = soTGFB)
-intfts <- SelectIntegrationFeatures(object.list = dtlist, nfeatures = nrow(tgfb)) # maxes out at 4080 (why?)
+intfts <- SelectIntegrationFeatures(object.list = dtlist, 
+                                    nfeatures = nrow(tgfb))
 dtlist <- PrepSCTIntegration(object.list = dtlist,
                              anchor.features = intfts)
-anchors <- FindIntegrationAnchors(object.list = dtlist, normalization.method = "SCT",
+anchors <- FindIntegrationAnchors(object.list = dtlist, 
+                                  normalization.method = "SCT",
                                   anchor.features = intfts)
-integrated <- IntegrateData(anchorset = anchors, normalization.method = "SCT")
+integrated <- IntegrateData(anchorset = anchors, 
+                            normalization.method = "SCT")
 integrated <- RunPCA(integrated)
 integrated <- RunUMAP(integrated, dims = 1:50)
 
@@ -78,7 +81,7 @@ data("tgfb", package = "condimentsPaper")
 ```{r compute scores, eval = TRUE, fig.width=7}
 df <- bind_cols(
   as.data.frame(reducedDims(tgfb)$UMAP),
-  as.data.frame(colData(tgfb))
+  as.data.frame(colData(tgfb)[, -3])
   ) %>%
   sample_frac(1)
 p1 <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = pheno.treatment_id)) +
@@ -150,7 +153,7 @@ p5 <- ggplot(df, aes(x = slingPseudotime_1)) +
   geom_density(aes(col = pheno.treatment_id), fill = "transparent",
                guide = FALSE, size = 1.5) +
   labs(x = "Pseudotime", fill = "Treatment") +
-  guides(col = FALSE, fill = guide_legend(
+  guides(col = "none", fill = guide_legend(
     override.aes = list(size = 1.5, col = c("#7FC97F", "#BEAED4"))
   )) +
   scale_fill_brewer(palette = "Accent") +
@@ -183,7 +186,7 @@ icMat <- evaluateK(counts = as.matrix(assays(tgfb)$counts),
 
 ```{r, eval=FALSE}
 set.seed(3)
-tgfb2 <- fitGAM(counts = tgfb, nknots = 5,
+tgfb <- fitGAM(counts = tgfb, nknots = 5,
                conditions = factor(colData(tgfb)$pheno$treatment_id),
                )
 mean(rowData(tgfb)$tradeSeq$converged)
@@ -242,7 +245,8 @@ Below we show heatmaps of the genes DE between conditions. The DE genes in the h
 library(cowplot)
 library(scales)
 ### based on mean smoother
-yhatSmooth <- predictSmooth(tgfb, gene = conditionGenes, nPoints = 50, tidy = FALSE) %>%
+yhatSmooth <- 
+  predictSmooth(tgfb, gene = conditionGenes, nPoints = 50, tidy = FALSE) %>%
   log1p()
 yhatSmoothScaled <- t(apply(yhatSmooth,1, scales::rescale))
 heatSmooth_TGF <- pheatmap(yhatSmoothScaled[, 51:100],
@@ -251,7 +255,8 @@ heatSmooth_TGF <- pheatmap(yhatSmoothScaled[, 51:100],
   silent = TRUE
 )
 
-matchingHeatmap_mock <- pheatmap(yhatSmoothScaled[heatSmooth_TGF$tree_row$order, 1:50],
+matchingHeatmap_mock <- 
+  pheatmap(yhatSmoothScaled[heatSmooth_TGF$tree_row$order, 1:50],
   cluster_cols = FALSE, cluster_rows = FALSE,
   show_rownames = FALSE, show_colnames = FALSE, main = "Mock",
   legend = FALSE, silent = TRUE 
@@ -274,6 +279,163 @@ names(statsCond) <- rownames(condRes)
 eaRes <- fgsea(pathways = m_list, stats = statsCond, nperm = 5e4, minSize = 10)
 eaRes <- eaRes %>% arrange(pval)
 knitr::kable(head(eaRes[, 1:3], n = 20))
+```
+
+# Running with Monocle 3
+## Trajectory inference and differential progression
+
+```{r monocle3}
+clusters <- colData(tgfb)$pheno$spatial_id
+names(clusters) <- colnames(tgfb)
+clusters[reducedDim(tgfb, "UMAP")[,1] > 0] <- "outer"
+tgfb$condition <- tgfb$pheno$treatment_id
+cds <- condimentsPaper:::.running_monocle(tgfb, clusters, start = "inner",
+                                          params = list(minimal_branch_len = 20),
+                                          keep_cds = TRUE)
+cds$cds@colData$conditions <- tgfb$condition
+plot_cells(cds$cds, color_cells_by = "conditions", label_branch_points = FALSE,
+           label_roots = FALSE, label_leaves = FALSE, cell_size = .7, 
+           label_groups_by_cluster = FALSE, trajectory_graph_segment_size = 1.5,
+           trajectory_graph_color = "black", label_cell_groups = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  theme_classic() +
+  theme(legend.position = "bottom",
+        rect = element_blank())
+```
+
+```{r plotDensities}
+df <- data.frame(pseudotime = cds$pseudotime[,1],
+                 Treatment = cds$conditions)
+ggplot(df, aes(x = pseudotime)) +
+  geom_density(alpha = .8, aes(fill = Treatment), col = "transparent") +
+  geom_density(aes(col = Treatment), fill = "transparent",
+               guide = FALSE, size = 1.5) +
+  guides(col = "none", fill = guide_legend(
+    override.aes = list(size = 1.5, col = c("#7FC97F", "#BEAED4"))
+  )) +
+  scale_fill_brewer(palette = "Accent") +
+  scale_color_brewer(palette = "Accent") +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+progressionTest(cds$pseudotime, cds$cellWeights, conditions = cds$conditions)
+```
+
+## Fit GAM
+
+```{r, eval=FALSE}
+set.seed(3)
+gamModels <- fitGAM(counts = as.matrix(assays(tgfb)$counts),
+              pseudotime = cds$pseudotime[,1],
+              cellWeights = cds$cellWeights[,1],
+              conditions = factor(cds$conditions),
+              nknots = 5)
+mean(rowData(gamModels)$tradeSeq$converged)
+condRes_monocle <- conditionTest(gamModels, l2fc = log2(2))
+condRes_monocle$padj <- p.adjust(condRes_monocle$pvalue, "fdr")
+condRes_monocle <- condRes_monocle %>% mutate(gene = rownames(.))
+```
+
+```{r}
+data("condRes_monocle", package = "condimentsPaper")
+condRes <- bind_rows(
+  "Monocle" = condRes_monocle,
+  "Slingshot" = condRes %>% mutate(gene = rownames(.)),
+  .id = "Trajectory"
+)
+condRes %>% 
+  select(Trajectory, gene, waldStat) %>%
+  pivot_wider(names_from = "Trajectory", values_from = "waldStat") %$%
+  cor(.$`Monocle`, .$`Slingshot`, use = "complete.obs")
+condRes %>% 
+  select(Trajectory, gene, padj) %>%
+  pivot_wider(names_from = "Trajectory", values_from = "padj") %>%
+  filter(!is.na(Monocle) & !is.na(Slingshot)) %>%
+  mutate(Monocle = if_else(Monocle <= .05, "sig", "not_sig"),
+         Slingshot = if_else(Slingshot <= .05, "sig", "not_sig")) %>%
+  group_by(Monocle, Slingshot) %>%
+  summarise(n = n())
+```
+
+# DASeq
+
+```{r}
+tgfb$condition <- tgfb$pheno$treatment_id
+colnames(tgfb) <- paste0("cell", seq_len(ncol(tgfb)))
+rownames(reducedDim(tgfb)) <- colnames(tgfb)
+tgfb$Sample <- sample(1:5, ncol(tgfb), replace = TRUE)
+tgfb$Sample[tgfb$condition == "TGFB"] <- 
+  tgfb$Sample[tgfb$condition == "TGFB"] + 10
+tgfb$Sample <- as.character(tgfb$Sample)
+info <- colData(tgfb)[, c("Sample", "condition")] %>%
+  as.data.frame() %>%
+  distinct()
+da_cells <- getDAcells(
+  X = reducedDim(tgfb, "UMAP"),
+  cell.labels = tgfb$Sample,
+  labels.1 = info$Sample[info$condition == "Mock"],
+  labels.2 = info$Sample[info$condition == "TGFB"],
+  k.vector = seq(50, 500, 50),
+  do.plot = TRUE,
+  plot.embedding = reducedDim(tgfb, "UMAP")
+)
+da_regions <- getDAregion(
+  X = reducedDim(tgfb, "UMAP"),
+  da.cells = da_cells,
+  cell.labels = tgfb$Sample,
+  labels.1 = info$Sample[info$condition == "Mock"],
+  labels.2 = info$Sample[info$condition == "TGFB"],
+  do.plot = TRUE,
+  plot.embedding = reducedDim(tgfb, "UMAP")
+)
+df <- bind_cols(
+  as.data.frame(reducedDims(tgfb)$UMAP),
+  as.data.frame(colData(tgfb)[, -3])
+  )
+df <- df[da_regions$cell.idx, ]
+df$region <- da_regions$da.region.label %>% as.character()
+df <- df %>%
+  select(UMAP_1, UMAP_2, region, condition) %>%
+  full_join(da_regions$DA.stat %>%
+              as.data.frame %>% 
+              mutate(region = rownames(.)))
+ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = DA.score)) +
+  geom_point(size = .7) +
+  scale_colour_gradient2() +
+  labs(col = "DA Score\nfrom DASeq") +
+  theme(legend.position = "bottom")
+```
+
+# Milo
+
+```{r}
+logcounts(tgfb) <- log1p(counts(tgfb))
+milo <- Milo(tgfb)
+milo <- buildGraph(milo, reduced.dim = "UMAP", d = 2, k = 20,
+                   BPPARAM = BiocParallel::SerialParam())
+milo <- makeNhoods(milo, refined = TRUE, reduced_dims = "UMAP", d = 2)
+milo$Sample <- sample(1:5, ncol(tgfb), replace = TRUE)
+milo$Sample[milo$condition == "TGFB"] <- 
+  milo$Sample[milo$condition == "TGFB"] + 5
+milo$Sample <- as.character(milo$Sample)
+design.df <- colData(milo)[, c("condition", "Sample")] %>%
+  as.data.frame()
+milo <- miloR::countCells(milo, meta.data = design.df, sample = "Sample")
+milo <- calcNhoodDistance(x = milo, d = 2, reduced.dim = "UMAP")
+design.df <- design.df %>% distinct()
+rownames(design.df) <- design.df$Sample
+da_results <- testNhoods(milo, design = ~ condition, design.df = design.df)
+milo <- buildNhoodGraph(milo)
+da_results <- groupNhoods(milo, da_results, max.lfc.delta = 2)
+plotNhoodGraphDA(milo, da_results, layout = "UMAP", alpha = 0.1) +
+  guides(edge_width = "none",
+         size = "none",
+         fill = guide_colorbar(title = "logFC\nfrom Milo")) +
+  theme_classic() +
+  labs(x = "UMAP_1", y = "UMAP_2") +
+  theme(legend.position = "bottom",
+        legend.title = element_text(size = 11))
 ```
 
 # Session info 

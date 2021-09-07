@@ -12,7 +12,7 @@
 #' @import Seurat SingleCellExperiment
 import_fibrosis <- function() {
   # Get Seurat Object
-  url <- ""
+  url <- "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE135nnn/GSE135893/suppl/GSE135893_ILD_annotated_fullsize.rds.gz"
   cds <- readRDS(file = url(url))
   cds <- cds[, cds$population == "Epithelial"]
   cds <- cds[, cds$celltype %in% c("AT1", "AT2", "SCGB3A2+", "Transitional AT2")]

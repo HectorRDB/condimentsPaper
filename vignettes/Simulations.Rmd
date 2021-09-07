@@ -43,9 +43,7 @@ This can be very long, we recommand running this in a separate script. None of t
 library(BiocParallel)
 set.seed(97174)
 options(Ncpus = 16L)
-BPPARAM <- bpparam()
-BPPARAM$progressbar <- TRUE
-BPPARAM$workers <- 30
+nCores <- 16
 ratio <- c(.5, .8, .9, .95)
 n_boot_real <- 50
 frac_real <- .1
@@ -71,10 +69,14 @@ for (multiplier in c(ratio, round(1 / ratio, 2)[4:1])) {
   sce <- create_bifurcating_simu(multiplier = multiplier)
   if (multiplier == .5) fork_sce <- sce
   set.seed(2019)
-  res_loc <- bplapply(seq_len(n_boot_real), function(b, frac) {
-    return(anayze_all(.sub_sample(sce, frac = frac)))
-  }, frac = frac_real, BPPARAM = BPPARAM)
-  res[[as.character(multiplier)]] <- bind_rows(res_loc)
+  res_loc <- mclapply(seq_len(n_boot_real), function(b, frac) {
+      return(anayze_all(sub_sample(sce, frac = frac)))
+    }, frac = frac_real, mc.cores = nCores)
+    worked <- lapply(res_loc, function(res){
+      return(!"SingleCellExperiment" %in% class(res))
+    }) %>% unlist()
+    res_loc <- res_loc[worked]
+    res[[as.character(multiplier)]] <- bind_rows(res_loc)
 }
 real <- bind_rows(res, .id = "multiplier") %>%
   clean_results()
@@ -83,9 +85,13 @@ real <- bind_rows(res, .id = "multiplier") %>%
 ```{r, eval = FALSE}
 sce <- create_bifurcating_simu(multiplier = 1, nSim = 400)
 set.seed(2019)
-res_loc <- bplapply(seq_len(n_boot_null), function(b, frac) {
+res_loc <- mclapply(seq_len(n_boot_null), function(b, frac) {
   return(anayze_all(sub_sample(sce, frac = frac)))
-}, frac = frac_null, BPPARAM = BPPARAM)
+  }, frac = frac_null, mc.cores = nCores)
+worked <- lapply(res_loc, function(res){
+  return(!"SingleCellExperiment" %in% class(res))
+}) %>% unlist()
+res_loc <- res_loc[worked]
 null <- bind_rows(res_loc) %>%
   mutate(multiplier = 1) %>%
   clean_results()
@@ -104,9 +110,12 @@ for (multiplier in c(ratio, round(1 / ratio, 2)[4:1])) {
  sce <- create_consecutive_bifurcating_simu(multiplier = multiplier)
  if (multiplier == .5) tree_sce <- sce
   set.seed(2019)
-  res_loc <- bplapply(seq_len(n_boot_real), function(b, frac) {
-    return(anayze_all(.sub_sample(sce, frac = frac)))
-  }, frac = frac_real, BPPARAM = BPPARAM)
+  res_loc <- mclapply(seq_len(n_boot_real), function(b, frac) {
+    return(anayze_all(sub_sample(sce, frac = frac), shape = 3))
+  }, frac = frac_real, mc.cores = nCores)
+  worked <- lapply(res_loc, class) %>% unlist()
+  worked <- worked == "data.frame"
+  res_loc <- res_loc[worked]
   res[[as.character(multiplier)]] <- bind_rows(res_loc)
 }
 real <- bind_rows(res, .id = "multiplier") %>%
@@ -116,9 +125,12 @@ real <- bind_rows(res, .id = "multiplier") %>%
 ```{r, eval = FALSE}
 sce <- create_consecutive_bifurcating_simu(multiplier = 1, nSim = 400)
 set.seed(2019)
-res_loc <- bplapply(seq_len(n_boot_null), function(b, frac) {
-  return(anayze_all(sub_sample(sce, frac = frac)))
-}, frac = frac_null, BPPARAM = BPPARAM)
+res_loc <- mclapply(seq_len(n_boot_null), function(b, frac) {
+  return(anayze_all(sub_sample(sce, frac = frac), shape = 3))
+}, frac = frac_null, mc.cores = nCores)
+worked <- lapply(res_loc, class) %>% unlist()
+worked <- worked == "data.frame"
+res_loc <- res_loc[worked]
 null <- bind_rows(res_loc) %>%
   mutate(multiplier = 1) %>%
   clean_results()
@@ -137,9 +149,13 @@ for (multiplier in ratio) {
  sce <- create_bifurcating_three_conditions_simu(multiplier = multiplier)
  if (multiplier == .5) complex_sce <- sce
   set.seed(2019)
-  res_loc <- bplapply(seq_len(n_boot_real), function(b, frac) {
-    return(anayze_all(.sub_sample(sce, frac = frac)))
-  }, frac = frac_real, BPPARAM = BPPARAM)
+  res_loc <- mclapply(seq_len(n_boot_real), function(b, frac) {
+    return(anayze_multiple_conditions(sub_sample(sce, frac = frac)))
+  }, frac = frac_real, mc.cores = nCores)
+  worked <- lapply(res_loc, function(res){
+    return(!"SingleCellExperiment" %in% class(res))
+  }) %>% unlist()
+  res_loc <- res_loc[worked]
   res[[as.character(multiplier)]] <- bind_rows(res_loc)
 }
 real <- bind_rows(res, .id = "multiplier") %>%
@@ -149,9 +165,13 @@ real <- bind_rows(res, .id = "multiplier") %>%
 ```{r, eval = FALSE}
 sce <- create_bifurcating_three_conditions_simu(multiplier = 1, nSim = 400)
 set.seed(2019)
-res_loc <- bplapply(seq_len(n_boot_null), function(b, frac) {
-  return(anayze_all(sub_sample(sce, frac = frac)))
-}, frac = frac_null, BPPARAM = BPPARAM)
+res_loc <- mclapply(seq_len(n_boot_null), function(b, frac) {
+  return(anayze_multiple_conditions(sub_sample(sce, frac = frac)))
+}, frac = frac_null, mc.cores = nCores)
+worked <- lapply(res_loc, function(res){
+  return(!"SingleCellExperiment" %in% class(res))
+}) %>% unlist()
+res_loc <- res_loc[worked]
 null <- bind_rows(res_loc) %>%
   mutate(multiplier = 1) %>%
   clean_results()
@@ -162,39 +182,176 @@ complex <- bind_rows("Real" = real, "Null" = null, .id = "Type") %>%
   arrange(multiplier)
 ```
 
+## Trajectory with five lineages and two conditions
+
+```{r, eval = FALSE}
+ratio <- c(.1, .2, .3, .5, 2, 3, 5, 10)
+res <- list()
+for (multiplier in ratio) {
+ sce <- create_5_lineages_simu(multiplier = multiplier)
+ if (multiplier == .5) complex_sce <- sce
+  set.seed(2019)
+  res_loc <- mclapply(seq_len(n_boot_real), function(b, frac) {
+    return(anayze_multiple_conditions(sub_sample(sce, frac = frac)))
+  }, frac = frac_real, mc.cores = nCores)
+  worked <- lapply(res_loc, function(res){
+    return(!"SingleCellExperiment" %in% class(res))
+  }) %>% unlist()
+  res_loc <- res_loc[worked]
+  res[[as.character(multiplier)]] <- bind_rows(res_loc)
+}
+real <- bind_rows(res, .id = "multiplier") %>%
+  clean_results()
+```
+
+```{r, eval = FALSE}
+sce <- create_5_lineages_simu(multiplier = 1, nSim = 400)
+set.seed(2019)
+res_loc <- mclapply(seq_len(n_boot_null), function(b, frac) {
+  return(anayze_multiple_conditions(sub_sample(sce, frac = frac)))
+}, frac = frac_null, mc.cores = nCores)
+worked <- lapply(res_loc, function(res){
+  return(!"SingleCellExperiment" %in% class(res))
+}) %>% unlist()
+res_loc <- res_loc[worked]
+null <- bind_rows(res_loc) %>%
+  mutate(multiplier = 1) %>%
+  clean_results()
+```
+
+```{r, eval = FALSE}
+five_lins <- bind_rows("Real" = real, "Null" = null, .id = "Type") %>%
+  arrange(multiplier)
+```
+
+## Wrong step 1 outcome
+
+```{r, eval = FALSE}
+ratio <- c(.9, .95)
+res <- list()
+for (multiplier in c(ratio, round(1 / ratio, 2)[2:1])) {
+  sce <- create_bifurcating_simu(multiplier = multiplier)
+  set.seed(2020)
+  res_loc <- mclapply(seq_len(n_boot_real), function(b, frac) {
+    return(anayze_all_per_cond(sub_sample(sce, frac = frac)))
+  }, frac = frac_real, mc.cores = nCores)
+  worked <- lapply(res_loc, class) %>% unlist()
+  worked <- worked == "data.frame"
+  res_loc <- res_loc[worked]
+  res[[as.character(multiplier)]] <- bind_rows(res_loc)
+}
+real <- bind_rows(res, .id = "multiplier")
+```
+
+```{r}
+sce <- create_consecutive_bifurcating_simu(multiplier = 1, nSim = 400)
+set.seed(2019)
+null <- mclapply(seq_len(n_boot_null), function(b, frac) {
+    return(anayze_all_per_cond(sub_sample(sce, frac = frac)))
+  }, frac = frac_null, mc.cores = nCores) %>%
+bind_rows()
+```
+
+```{r, eval = FALSE}
+step1_fail <- bind_rows("Real" = real, "Null" = null, .id = "Type") %>%
+  arrange(multiplier) %>%
+  mutate(X = X - 1, group = X - X %% 5) %>%
+  select(-X) %>%
+  mutate(multiplier = as.numeric(multiplier))
+```
+
+## Unstability
+
+```{r, eval = FALSE}
+add_noise_to_sce <- function(sce, noise_pst = .1, noise_wgt = .1) {
+  pseudotime <- matrix(sce$sim_time, ncol = 2,
+                       nrow = ncol(sce), byrow = FALSE)
+  weights <- matrix(c(sce$from %in% c("sA", "sB", "sBmid", "sC"),
+                      sce$from %in% c("sA", "sB", "sBmid", "sD")),
+                    nrow = ncol(sce), byrow = FALSE)
+  normWeights <- sweep(weights, 1,
+                       FUN = "/",
+                       STATS = apply(weights, 1, sum))
+  pseudotime <- pseudotime * matrix(rnorm(2 * ncol(sce), mean = 1, sd = noise_pst), ncol = 2)
+  normWeights <- apply(normWeights, 1, function(row) {
+    switch <- rbinom(1, 1, noise_wgt)
+    if (switch) {
+      return(1 - row)
+    } else {
+      return(row)
+    }
+  })
+  return(list("pseudotime" = pseudotime,
+              "cellWeights" = t(normWeights)))
+}
+```
+
+```{r, eval = FALSE}
+set.seed(20876)
+sce <-  create_bifurcating_simu(multiplier = .85)
+i <- 1
+res <- list()
+for (noise_pst in c(0:40 / 10)) {
+  for (noise_wgt in c(0:5 / 10)) {
+    for (j in 1:100) {
+      print(i)
+      estimates <- add_noise_to_sce(sce, noise_pst, noise_wgt)
+      res_noise <- progressionTest(pseudotime = estimates$pseudotime, 
+                                  cellWeights = estimates$cellWeights,
+                                  conditions = sce$condition,
+                                  thresh = .01) %>%
+        select(-lineage)
+      res_noise$noise_pst <- noise_pst
+      res_noise$noise_wgt <- noise_wgt
+      res[[i]] <- res_noise
+      i <- i + 1
+    }
+  }
+}
+unstability <- bind_rows(res)
+```
+
 # Exploring the simulations
 ## Low dimension representation
-### Bifurcating trajectory with two conditions
 
 ```{r, fig.height=5, fig.width=6}
 data("fork_sce", package = "condimentsPaper")
-p <- plot_reduced_dim_together(fork_sce)
-p +
-  annotate("text", x = -.1, y = -.5, label = "Start", size = 5) +
-  annotate("text", x = .35, y = .1, label = "Lineage 1", size = 5) +
-  annotate("text", x = -.2, y = .42, label = "Lineage 2", size = 5)
+plot_reduced_dim_together(fork_sce) +
+  annotate("text", x = 0, y = -.4, label = "Start", size = 4) +
+  annotate("text", x = .35, y = .05, label = "Lineage 1", size = 4) +
+  annotate("text", x = -.4, y = .15, label = "Lineage 2", size = 4)
 ```
 
 ```{r, fig.height=5, fig.width=6}
 data("tree_sce", package = "condimentsPaper")
-p <- plot_reduced_dim_together(tree_sce)
-p +
-  annotate("text", x = .1, y = .4, label = "Start", size = 5) +
-  annotate("text", x = -.25, y = -.35, label = "Lineage 1", size = 5) +
-  annotate("text", x = .2, y = -.4, label = "Lineage 2", size = 5) +
-  annotate("text", x = .25, y = -.15, label = "Lineage 3", size = 5)
+plot_reduced_dim_together(tree_sce)  +
+  annotate("text", x = -.15, y = .35, label = "Start", size = 4) +
+  annotate("text", x = -.3, y = -.1, label = "Lineage 1", size = 4) +
+  annotate("text", x = .1, y = -.35, label = "Lineage 2", size = 4) +
+  annotate("text", x = .25, y = -.05, label = "Lineage 3", size = 4)
 ```
 
 ```{r, fig.height=5, fig.width=6}
 data("complex_sce", package = "condimentsPaper")
-p <- plot_reduced_dim_together(complex_sce)
-p +
-  annotate("text", x = -.15, y = -.35, label = "Start", size = 5) +
-  annotate("text", x = .35, y = .2, label = "Lineage 1", size = 5) +
-  annotate("text", x = -.3, y = .2, label = "Lineage 2", size = 5)
+plot_reduced_dim_together(complex_sce) +
+  annotate("text", x = -.15, y = -.3, label = "Start", size = 4) +
+  annotate("text", x = .3, y = .2, label = "Lineage 1", size = 4) +
+  annotate("text", x = -.35, y = .2, label = "Lineage 2", size = 4)
+```
+
+```{r, fig.height=5, fig.width=6}
+data("fivelin_sce", package = "condimentsPaper")
+plot_reduced_dim_together(fivelin_sce) +
+  annotate("text", x = 0, y = -.1, label = "Start", size = 4) +
+  annotate("text", x = .3, y = .15, label = "Lineage 1", size = 4, angle = 30) +
+  annotate("text", x = .2, y = .3, label = "Lineage 2", size = 4, angle = 30) +
+  annotate("text", x = -.3, y = .05, label = "Lineage 3", size = 4) +
+  annotate("text", x = -.15, y = .3, label = "Lineage 4", size = 4) +
+  annotate("text", x = 0, y = -.35, label = "Lineage 5", size = 4)
 ```
 
 ## Network branching
+### Two lineages
 
 ```{r}
 set.seed(0989021)
@@ -223,6 +380,8 @@ net <- ggdraw() +
 net
 ```
 
+### Three lineages
+
 ```{r}
 set.seed(1082)
 backbone <- backbone_consecutive_bifurcating()
@@ -250,59 +409,148 @@ net2 <- ggdraw() +
 net2
 ```
 
+### Five lineages
+
+```{r}
+set.seed(15)
+bblego_list <- list(
+  bblego_start("A", type = "simple", num_modules = 2),
+  bblego_linear("A", to = "B", num_modules = 2),
+  bblego_branching("B", c("C", "D", "E")),
+  bblego_branching("C", c("F", "G")),
+  bblego_branching("E", c("H", "I")),
+  bblego_end("D", num_modules = 4), 
+  bblego_end("F", num_modules = 4), bblego_end("G", num_modules = 4),
+  bblego_end("H", num_modules = 6), bblego_end("I", num_modules = 6)
+)
+backbone <- bblego(.list = bblego_list)
+model_common <-
+  initialise_model(
+    backbone = backbone,
+    num_cells = 100,
+    num_tfs = nrow(backbone$module_info),
+    num_targets = 250,
+    num_hks = 250,
+    simulation_params = simulation_default(
+      census_interval = 10, 
+      ssa_algorithm = ssa_etl(tau = 300 / 3600),
+      experiment_params = simulation_type_wild_type(num_simulations = 100)
+    )
+  ) %>%
+  generate_tf_network()
+set.seed(14)
+net3 <- plot_backbone_modulenet_simplify(model_common) +
+  guides(col = FALSE, edge_width = FALSE) +
+  scale_edge_width_continuous(range = c(.5, .5)) + 
+  theme(plot.background = element_blank()) 
+net3 <- ggdraw() +
+  draw_plot(net3, 0, 0, scale = 1.2)
+net3
+```
+
+
+
 # Analyzing the simulations
 
 ```{r}
 data("fork", package = "condimentsPaper")
 data("tree", package = "condimentsPaper")
 data("complex", package = "condimentsPaper")
+data("five_lins", package = "condimentsPaper")
 ```
 
-## All together
+## Comparison of methods
 
 ```{r}
-df <- lapply(list("fork" = fork, "tree" = tree, "complex" = complex), 
-             function(dataset) {
-   bind_rows(".05" = all_metrics(dataset, .05),
-             ".01" = all_metrics(dataset, .01), 
-             .id = "cutoff") %>%
-    return()
-             }
-) %>% bind_rows(.id = "dataset") %>%
-  mutate(value = round(value, 2))
-```
-
-```{r, fig.height=6, fig.width=6}
-labs_pct <- function(Panel) {
-  val <- word(Panel) %>% as.numeric()
-  return(paste0("FDR: ", round(100 * val), "%"))
-}
-df <- df %>%
+df <- lapply(
+  list("fork" = fork, "tree" = tree, "complex" = complex, "5lin" = five_lins),
+  all_metrics, cutoff = .05) %>%
+  bind_rows(.id = "dataset") %>%
+  mutate(value = round(value, 2)) %>%
   mutate(metric = factor(metric, levels = c("TNR", "PPV", "TPR", "NPV", "F1")),
-         dataset = factor(dataset, levels = c("fork", "tree", "complex"))) %>%
+         dataset = case_when(
+           dataset == "fork" ~ "a)",
+           dataset == "tree" ~ "b)",
+           dataset == "complex" ~ "c)",
+           dataset == "5lin" ~ "d)"
+         ),
+         dataset = factor(dataset, levels = c("a)", "b)", "c)", "d)"))) %>%
   arrange(dataset, metric) %>%
   mutate(test_type = factor(test_type, 
-                            levels = c("condiments_prog", "condiments_diff",
-                                       "DAseq", "milo")),
-         Panel = paste0(cutoff, " ", dataset),
-         Panel = factor(Panel, levels = unique(Panel)),
+                            levels = c("condiments_sling_prog", "condiments_mon_prog",
+                                       "condiments_sling_diff", "DAseq", "milo")),
          label = if_else(is.na(value), "NA", as.character(value)))
-p <- ggplot(df, aes(x = test_type, y = metric, label = label,
+table_plot <- function(df) {
+  p <- ggplot(df, aes(x = test_type, y = metric, label = label,
                fill = as.numeric(label))) +
   geom_tile() +
   geom_text(na.rm = FALSE) +
   scale_fill_viridis_c() +
-  scale_x_discrete(labels = c("progressionTest", "differentationTest", "DAseq",
-                              "milo")) +
-  labs(x = "", y = "", fill = "") +
-  guides(fill = FALSE) +
-  facet_grid(Panel ~ ., switch = "y", labeller = labeller(Panel = labs_pct)) +
-  theme(axis.text.x = element_text(size = 14, angle = -20, vjust = .2)) + 
+  scale_x_discrete(labels = c("progressionTest\n(Slingshot)", "progressionTest\n(Monocle)",
+                              "differentationTest\n(Slingshot)", "DAseq", "Milo")) +
+  labs(x = "", y = "", fill = "(Value - 1)\n") +
+  guides(fill = "none") +
+  facet_grid(dataset ~ ., switch = "y") +
+  theme(axis.text.x = element_text(size = 14, angle = -20, vjust = .2)) +
   theme(legend.position =  "right",
         legend.title = element_text(size = 16),
         legend.text = element_text(size = 14),
-        legend.background = element_blank())
+        legend.background = element_blank(),
+        panel.spacing.y = unit(7, "pt"),
+        strip.text.y.left = element_text(angle = 0))
+  return(p)
+}
+table_plot(df)
+```
+
+
+## Wrong step 1 outcome
+
+```{r}
+data("step1_fail", package = "condimentsPaper")
+cutoffs <- c((2:9) * .001, (1:9) * .01, .1 * 1:10)
+df <- step1_fail %>% 
+  mutate(test_type = paste0(method, "_", test_type)) %>% 
+  select(test_type, multiplier, p.value, Type) %>%
+  dplyr::rename("adjusted_p_value" = "p.value") %>%
+  lapply(cutoffs, all_metrics, df = .)
+names(df) <- cutoffs
+df <- bind_rows(df, .id = "cutoff") %>%
+  mutate(cutoff = as.numeric(cutoff)) %>%
+  select(cutoff, metric, value, test_type) %>%
+  pivot_wider(names_from = metric, values_from = value) %>%
+  filter(str_detect(test_type, "sling")) %>%
+  mutate(step1 = if_else(str_detect(test_type, "normal"),
+                         "Fail to reject the null\n(Common trajectory)",
+                         "Reject the null\n(Separate trajectory)"),
+         test_type = word(test_type, 3, sep = "_"),
+         test_type = if_else(test_type == "diff", "differentiationTest", "progressionTest"))
+p <- ggplot(df, aes(x = 1 - PPV, y = TPR, col = step1)) +
+  geom_path() +
+  geom_point(size = 2) +
+  facet_wrap(~test_type, scales = "free_y") + 
+  scale_color_brewer(palette = "Set1") +
+  labs(col = "Step 1 results:") +
+  theme_classic() +
+  theme(legend.position = "bottom")
 p
+```
+
+## Unstability
+
+```{r}
+data("unstability", package = "condimentsPaper")
+df <- unstability %>%
+  group_by(noise_pst, noise_wgt) %>%
+  summarise(p.value = median(p.value))
+p <- ggplot(df, aes(x = noise_pst, y = p.value)) +
+  geom_point(aes(col = as.character(noise_wgt))) +
+  labs(x = "Noise on Pseudotime", y = "p value", 
+       col = "Noise on\nbranch assignement")
+legend <- get_legend(p + theme(legend.position = "bottom"))
+p <- p + guides(col = FALSE, fill = FALSE)
+plot_grid(plot_grid(p, p + scale_y_log10(), ncol = 2, scale = .95),
+          legend, rel_heights = c(10, 1), nrow = 2)
 ```
 
 ## Special look at three condition situation
