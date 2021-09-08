@@ -487,7 +487,7 @@ table_plot <- function(df) {
   geom_text(na.rm = FALSE) +
   scale_fill_viridis_c() +
   scale_x_discrete(labels = c("progressionTest\n(Slingshot)", "progressionTest\n(Monocle)",
-                              "differentationTest\n(Slingshot)", "DAseq", "Milo")) +
+                              "fateSelectionTest\n(Slingshot)", "DAseq", "Milo")) +
   labs(x = "", y = "", fill = "(Value - 1)\n") +
   guides(fill = "none") +
   facet_grid(dataset ~ ., switch = "y") +
@@ -524,7 +524,7 @@ df <- bind_rows(df, .id = "cutoff") %>%
                          "Fail to reject the null\n(Common trajectory)",
                          "Reject the null\n(Separate trajectory)"),
          test_type = word(test_type, 3, sep = "_"),
-         test_type = if_else(test_type == "diff", "differentiationTest", "progressionTest"))
+         test_type = if_else(test_type == "diff", "fateSelectionTest", "progressionTest"))
 p <- ggplot(df, aes(x = 1 - PPV, y = TPR, col = step1)) +
   geom_path() +
   geom_point(size = 2) +

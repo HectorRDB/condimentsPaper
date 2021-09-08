@@ -188,11 +188,11 @@ ggplot(df, aes(x = pst)) +
   theme(legend.position = c(.8, .8), legend.direction = "horizontal")
 ```
 
-# Differential Differentiation
+# Differential fate selection
 ## Test
 
 ```{r}
-differentiationTest(sce, conditions = sce$Status)
+fateSelectionTest(sce, conditions = sce$Status)
 ```
 
 ## Plot

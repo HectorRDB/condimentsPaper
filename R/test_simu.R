@@ -120,9 +120,9 @@
                                  cellWeights = cds$cellWeights,
                                  conditions = cds$condition, thresh = .01,
                                  lineages = TRUE, global = FALSE),
-    "sling_diff" = differentiationTest(sds, sce$condition, method = "Classifier",
-                                       args_classifier = list(method = "rf"), thresh = .01,
-                                       pairwise = TRUE, global = FALSE),
+    "sling_diff" = fateSelectionTest(sds, sce$condition, method = "Classifier",
+                                     args_classifier = list(method = "rf"), 
+                                     thresh = .01, pairwise = TRUE, global = FALSE),
     .id = "test_type"
   ) %>%
     group_by(test_type) %>%
@@ -147,11 +147,11 @@
   vals <- bind_rows(
     "sling_prog" = progressionTest(sds, sce$condition, thresh = .05, 
                                    lineages = TRUE, global = FALSE),
-    "sling_diff" = differentiationTest(sds, sce$condition,
-                                       method = "Classifier",
-                                       args_classifier = list(method = "rf"),
-                                       thresh = .01, 
-                                       pairwise = TRUE, global = FALSE),
+    "sling_diff" = fateSelectionTest(sds, sce$condition,
+                                     method = "Classifier",
+                                     args_classifier = list(method = "rf"),
+                                     thresh = .01, 
+                                     pairwise = TRUE, global = FALSE),
     .id = "test_type"
   ) %>%
     group_by(test_type) %>%

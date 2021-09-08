@@ -17,10 +17,14 @@ data(fibrosis)
 This dataset contains all the information used for the fibrosis case study
 }
 \references{
-Jenny Y. Xue, Yulei Zhao, Jordan Aronowitz, Trang T. Mai, Alberto Vides,
-Besnik Qeriqi, Dongsung Kim, Chuanchuan Li, Elisa de Stanchina, Linas Mazutis,
-Davide Risso, and Piro Lito.
-\emph{Rapid non-uniform adaptation to conformation-specific KRAS(G12C) inhibition.}
-Nature, 577(7790):421–425,jan  2020. ISSN  14764687. doi: 10.1038/s41586-019-1884-x
+Arun  C.  Habermann,  Austin  J.  Gutierrez,  Linh  T.  Bui,
+Stephanie  L. Yahn,  Nichelle  I.  Winters, Carla L. Calvi, Lance Peter,
+Mei I. Chung, Chase J. Taylor, Christopher Jetter, Latha Raju, Jamie Roberson,
+Guixiao Ding, Lori Wood, Jennifer M.S. Sucre, Bradley W. Richmond, Ana P. Serezani,
+Wyatt J. McDonnell,  Simon B. Mallal,  Matthew J. Bacchetta,  James E. Loyd,
+Ciara M. Shaver,Lorraine B. Ware,  Ross Bremner,  Rajat Walia,
+Timothy S. Blackwell,  Nicholas E. Banovich,  and Jonathan A. Kropski.
+\emph{Single-cell rna sequencing reveals profibrotic roles of distinct epithelial and mesenchymal  lineages  in  pulmonary  fibrosis}
+Science  Advances,  6,  2020.   ISSN  23752548.   doi:10.1126/sciadv.aba1972.
 }
 \keyword{datasets}

@@ -186,11 +186,11 @@ p5 <- ggplot(df, aes(x = pst)) +
 p5
 ```
 
-# Differential Differentiation
+# Differential fate selection
 ## Test
 
 ```{r}
-differentiationTest(sds, conditions = kras$Batch, pairwise = TRUE)
+fateSelectionTest(sds, conditions = kras$Batch, pairwise = TRUE)
 ```
 
 ## Plot
