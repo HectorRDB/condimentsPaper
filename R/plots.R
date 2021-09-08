@@ -80,13 +80,13 @@ plot_reduced_dim <- function(sce) {
 #' @export
 #' @import ggplot2 SingleCellExperiment
 #' @importFrom dplyr filter bind_cols sample_frac
-plot_reduced_dim_together <- function(sce) {
+plot_reduced_dim_together <- function(sce, sample = 1) {
   colors <- c("#0072B2", "#D55E00", "#F0E442")
   df <- dplyr::bind_cols(
     colData(sce) %>% as.data.frame(),
     reducedDim(sce) %>% as.data.frame()
   ) %>%
-    dplyr::sample_frac(1)
+    dplyr::sample_frac(size = sample)
   p <- ggplot(df, aes(col = condition)) +
     geom_point(size = .1, aes(x = comp_1, y = comp_2)) +
     scale_color_manual(values = colors, breaks = c("WT", "KO", "UP")) +
