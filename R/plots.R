@@ -77,16 +77,18 @@ plot_reduced_dim <- function(sce) {
 #' @description Takes as input the low dimension representation and the
 #' skeleton structure of WT and KO and plot them, colored by condition.
 #' @param sce A single cell experiment object, result of the simulation
+#' @param sample Fraction of the data to plot. Default to 1.
 #' @export
 #' @import ggplot2 SingleCellExperiment
 #' @importFrom dplyr filter bind_cols sample_frac
 plot_reduced_dim_together <- function(sce, sample = 1) {
   colors <- c("#0072B2", "#D55E00", "#F0E442")
-  df <- dplyr::bind_cols(
-    colData(sce) %>% as.data.frame(),
-    reducedDim(sce) %>% as.data.frame()
-  ) %>%
-    dplyr::sample_frac(size = sample)
+  df <- dplyr::bind_cols(colData(sce) %>% as.data.frame(),
+                         reducedDim(sce) %>% as.data.frame()) %>%
+    dplyr::group_by(condition) %>% 
+    dplyr::sample_frac(size = sample) %>%
+    dplyr::ungroup() %>%
+    dplyr::sample_frac(size = 1)
   p <- ggplot(df, aes(col = condition)) +
     geom_point(size = .1, aes(x = comp_1, y = comp_2)) +
     scale_color_manual(values = colors, breaks = c("WT", "KO", "UP")) +
