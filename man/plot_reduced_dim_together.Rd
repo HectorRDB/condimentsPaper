@@ -4,10 +4,12 @@
 \alias{plot_reduced_dim_together}
 \title{Plot simulation dataset by condition}
 \usage{
-plot_reduced_dim_together(sce)
+plot_reduced_dim_together(sce, sample = 1)
 }
 \arguments{
 \item{sce}{A single cell experiment object, result of the simulation}
+
+\item{sample}{Fraction of the data to plot. Default to 1.}
 }
 \description{
 Takes as input the low dimension representation and the
