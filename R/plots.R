@@ -90,7 +90,7 @@ plot_reduced_dim_together <- function(sce, sample = 1) {
     dplyr::ungroup() %>%
     dplyr::sample_frac(size = 1)
   p <- ggplot(df, aes(col = condition)) +
-    geom_point(size = .1, aes(x = comp_1, y = comp_2)) +
+    geom_point(size = .2, aes(x = comp_1, y = comp_2), alpha = .5) +
     scale_color_manual(values = colors, breaks = c("WT", "KO", "UP")) +
     labs(col = "Conditions", x = "Dim1", y = "Dim2") +
     scale_x_continuous(limits = c(-.5, .5)) +
