@@ -113,6 +113,17 @@
 #' @format Results on 900 datasets
 "complex"
 
+#' Results on the five lineages datasets
+#'
+#' This dataset contains all the results from the simulation on the datasets
+#' with five lineages
+#'
+#' @source
+#' Output of the simulations
+#' @usage data(five_lins)
+#' @format Results on 900 datasets
+"five_lins"
+
 #' A \link[SingleCellExperiment]{SingleCellExperiment} example of a one bifurcation and two conditions dataset
 #'
 #' Simulated dataset with one bifurcation and two conditions
