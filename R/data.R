@@ -164,3 +164,23 @@
 #' @usage data(fivelin_sce)
 #' @format A \link[SingleCellExperiment]{SingleCellExperiment} object
 "fivelin_sce"
+
+#' Results of the unstability test
+#'
+#' This dataset contains all the results from the unstability test
+#'
+#' @source
+#' Output of the simulations
+#' @usage data(unstability)
+#' @format Results in data.frame format
+"unstability"
+
+#' Results of the unstability test
+#'
+#' This dataset contains all the results from the step1_fail test
+#'
+#' @source
+#' Output of the simulations
+#' @usage data(step1_fail)
+#' @format Results in data.frame format
+"step1_fail"
