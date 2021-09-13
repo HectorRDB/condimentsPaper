@@ -20,6 +20,7 @@ reference:
       Those three functions obtain the dataset and metadata (mostly from GEO) 
       and format them for analysis.
     contents:
+      - '`import_fibrosis`'
       - '`import_KRAS`'
       - '`import_TCDD`'
       - '`import_TGFB`'
@@ -27,6 +28,8 @@ reference:
     desc: >
       The formatted datasets used in the simulations
     contents:
+      - '`condRes_monocle`'
+      - '`fibrosis`'
       - '`kras`'
       - '`tcdd`'
       - '`tgfb`'
@@ -36,8 +39,9 @@ reference:
     contents:
       - '`all_metrics`'
       - '`anayze_all`'
+      - '`anayze_all_per_cond`'
       - '`anayze_multiple_conditions`'
-      - '`clean_results`'
+      - '`create_5_lineages_simu`'
       - '`create_bifurcating_simu`'
       - '`create_bifurcating_three_conditions_simu`'
       - '`create_consecutive_bifurcating_simu`'
@@ -53,7 +57,11 @@ reference:
     contents:
       - '`complex`'
       - '`complex_sce`'
+      - '`five_lins`'
+      - '`fivelin_sce`'
       - '`fork`'
       - '`fork_sce`'
+      - '`step1_fail`'
       - '`tree`'
       - '`tree_sce`'
+      - '`unstability`'
