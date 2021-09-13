@@ -53,7 +53,7 @@ cols <- c(brewer.pal(5, "Blues")[2:5], brewer.pal(3, "Greens")[2:3], brewer.pal(
 names(cols) <- c(3, 5, 4, 1, 8, 2, 9, 10, 6, 7)
 kras$Cluster <- as.character(kras$Cluster)
 reducedDim(kras, "TSNE") <- colData(kras)[, c("tSNE1", "tSNE2")] %>% as.matrix()
-df <- colData(kras) %>% as.data.frame() %>%
+df <- colData(kras)[, 1:98] %>% as.data.frame() %>%
   sample_frac(1)
 p1 <- ggplot(df, aes(x = tSNE1, y = tSNE2, col = Batch)) +
   geom_point(size = .7) +
@@ -107,13 +107,13 @@ sds <- do.call(merge_sds, sdss)
 ```
 
 ```{r}
-df <- df %>% select(X1, tSNE1, tSNE2, Cluster, Batch) %>%
-  full_join(
-    slingPseudotime(sds) %>% 
-      as.data.frame() %>%
-      mutate(X1 = rownames(.)) %>%
-      dplyr::rename("Lineage1" = V1, "Lineage2" = V2, "Lineage3" = V3))
-df <- df %>%
+df <- full_join(
+  df %>% select(X1, tSNE1, tSNE2, Cluster, Batch) %>%
+  dplyr::rename(cells = X1),
+  slingPseudotime(sds) %>% 
+    as.data.frame() %>%
+    mutate(cells = rownames(.))
+) %>%
   pivot_longer(starts_with("Lineage"), names_to = "Curve", values_to = "pst")
 p4 <- ggplot(df, aes(x = tSNE1, y = tSNE2, col = Batch)) +
   geom_point(size = .7, alpha = .1) +
@@ -147,7 +147,7 @@ cls <- df %>% group_by(Cluster, Batch) %>%
   dplyr::summarise(tSNE1 = mean(tSNE1), tSNE2 = mean(tSNE2), .groups = NULL)
 p <- p +
   geom_point(data = cls, size = 3)
-edges <- lapply(sds@lineages, function(lin) {
+edges <- lapply(slingLineages(sds), function(lin) {
   from <- lin[1:(length(lin) - 1)]
   to <- lin[2:length(lin)]
   return(data.frame("from" = from, "to" = to))
@@ -200,17 +200,16 @@ weights <- condiments:::.sling_reassign(sds)
 df <- df %>%
   full_join(weights %>% 
               as.data.frame() %>%
-              mutate(X1 = rownames(.)) %>%
+              mutate(cells = rownames(.)) %>%
               dplyr::rename("Lineage1" = V1, "Lineage2" = V2, "Lineage3" = V3) %>%
               pivot_longer(starts_with("Lineage"), names_to = "Curve", values_to = "weights")
       )
 df_w <- df %>%
   select(-pst) %>%
-  group_by(X1) %>%
+  group_by(cells) %>%
   mutate(weights = weights / sum(weights)) %>%
   pivot_wider(names_from = "Curve", values_from = "weights")
 p <- ggplot(df_w, aes(x = Lineage1, y = Lineage3)) +
-  # geom_hex(aes(fill=log(..count..))) +
   geom_hex() +
   scale_fill_viridis_c(direction = -1) +
   facet_wrap(~Batch, scales = "free") +
@@ -229,7 +228,7 @@ p
 ```{r}
 df_w <- df %>%
   select(-pst) %>%
-  group_by(X1) %>%
+  group_by(cells) %>%
   mutate(weights = weights / sum(weights)) %>%
   ungroup() %>%
   group_by(Batch, Curve) %>%
