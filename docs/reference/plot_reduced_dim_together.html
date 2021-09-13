@@ -107,6 +107,9 @@ skeleton structure of WT and KO and plot them, colored by condition." />
       <a href="../articles/Examples.html">Figure 1: examples</a>
     </li>
     <li>
+      <a href="../articles/Fibrosis.html">Analysis of the fibrosis datataset</a>
+    </li>
+    <li>
       <a href="../articles/KRAS.html">Analysis of the KRAS datataset</a>
     </li>
     <li>
@@ -124,7 +127,7 @@ skeleton structure of WT and KO and plot them, colored by condition." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/HectorRDB/condimentsPaper">
-    <span class="fas fa-github"></span>
+    <span class="fa fa-github"></span>
      
   </a>
 </li>
@@ -151,7 +154,7 @@ skeleton structure of WT and KO and plot them, colored by condition." />
 skeleton structure of WT and KO and plot them, colored by condition.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_reduced_dim_together</span><span class='op'>(</span><span class='va'>sce</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>plot_reduced_dim_together</span><span class='op'>(</span><span class='va'>sce</span>, sample <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,6 +162,10 @@ skeleton structure of WT and KO and plot them, colored by condition.</p>
     <tr>
       <th>sce</th>
       <td><p>A single cell experiment object, result of the simulation</p></td>
+    </tr>
+    <tr>
+      <th>sample</th>
+      <td><p>Fraction of the data to plot. Default to 1.</p></td>
     </tr>
     </table>
 

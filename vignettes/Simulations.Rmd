@@ -23,7 +23,7 @@ opts_chunk$set(
 
 ```{r}
 libs <- c("here", "dplyr", "stringr", "tidyr", "SingleCellExperiment", "slingshot",
-          "condiments", "cowplot", "dyngen", "ggplot2", "condimentsPaper")
+          "condiments", "cowplot", "dyngen", "ggplot2", "condimentsPaper", "ggraph")
 suppressMessages(
   suppressWarnings(sapply(libs, require, character.only = TRUE))
 )
@@ -243,7 +243,7 @@ for (multiplier in c(ratio, round(1 / ratio, 2)[2:1])) {
 real <- bind_rows(res, .id = "multiplier")
 ```
 
-```{r}
+```{r, eval = FALSE}
 sce <- create_consecutive_bifurcating_simu(multiplier = 1, nSim = 400)
 set.seed(2019)
 null <- mclapply(seq_len(n_boot_null), function(b, frac) {
@@ -568,6 +568,12 @@ ggplot(complex, aes(x = as.numeric(factor(multiplier, levels = unique(multiplier
   labs(x = "Effect Size: Multiplier on the master regulator",
        y = "adjusted p-value", col = "Test", fill = "Test") +
   theme(legend.position = "bottom")
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
 ```
 
 # References 

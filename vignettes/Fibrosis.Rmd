@@ -1,5 +1,5 @@
 ---
-title: 'Analysis of the Fibrosis datataset'
+title: 'Analysis of the fibrosis datataset'
 author: "Hector Roux de Bézieux"
 bibliography: ref.bib
 output: 
@@ -7,7 +7,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Analysis of the Fibrosis dataset}
+  %\VignetteIndexEntry{Analysis of the fibrosis dataset}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,8 +21,6 @@ opts_chunk$set(
 ```
 
 # Load data
-
-The dataset we will be working with concerns a single-cell RNA-sequencing dataset consisting of three cancer models under a  KRAS(G12C) inhibition [@Xue2020].
 
 ```{r}
 libs <- c("here", "tidyr", "dplyr", "Seurat", "scater", "slingshot", "cowplot",
@@ -40,7 +38,7 @@ theme_set(theme_classic() +
 ```
 
 ```{r, eval = FALSE}
-kras <- condimentsPaper::import_fibrosis()
+fibrosis <- condimentsPaper::import_fibrosis()
 ```
 
 ```{r}
@@ -52,8 +50,8 @@ data("fibrosis", package = "condimentsPaper")
 Reduced dimension coordinates are obtained from the original publication.
 
 ```{r}
-df <- bind_cols(reducedDim(sce, "UMAP") %>% as.data.frame(),
-                colData(sce)[, 1:14] %>% as.data.frame())
+df <- bind_cols(reducedDim(fibrosis, "UMAP") %>% as.data.frame(),
+                colData(fibrosis)[, 1:14] %>% as.data.frame())
 ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = Status)) +
   geom_point(size = .5) +
   scale_color_brewer(palette = "Accent") +
@@ -92,8 +90,8 @@ To estimate the trajectory, we use _slingshot_ [@Street2018a].
 ## Fit slingshot
 
 ```{r}
-sce <- slingshot(sce, reducedDim = 'UMAP',
-                 clusterLabels = colData(sce)$celltype,
+fibrosis <- slingshot(fibrosis, reducedDim = 'UMAP',
+                 clusterLabels = colData(fibrosis)$celltype,
                  start.clus = 'AT1', approx_points = 100)
 ```
 
@@ -101,21 +99,21 @@ sce <- slingshot(sce, reducedDim = 'UMAP',
 
 ```{r}
 set.seed(821)
-topologyTest(SlingshotDataSet(sce), sce$Status)
+topologyTest(SlingshotDataSet(fibrosis), fibrosis$Status)
 
-sce_SCGB3A2 <- slingshot(sce[, sce$celltype != "SCGB3A2+"],
+fibrosis_SCGB3A2 <- slingshot(fibrosis[, fibrosis$celltype != "SCGB3A2+"],
                          reducedDim = 'UMAP',
-            clusterLabels = colData(sce[, sce$celltype != "SCGB3A2+"])$celltype,
+            clusterLabels = colData(fibrosis[, fibrosis$celltype != "SCGB3A2+"])$celltype,
                  start.clus = 'AT1', approx_points = 100)
 set.seed(821)
-topologyTest(SlingshotDataSet(sce_SCGB3A2), sce_SCGB3A2$Status)
-rm(sce_SCGB3A2)
+topologyTest(SlingshotDataSet(fibrosis_SCGB3A2), fibrosis_SCGB3A2$Status)
+rm(fibrosis_SCGB3A2)
 ```
 
 ## Separate trajectories 
 
 ```{r}
-sdss <- slingshot_conditions(SlingshotDataSet(sce), sce$Status)
+sdss <- slingshot_conditions(SlingshotDataSet(fibrosis), fibrosis$Status)
 curves <- bind_rows(lapply(sdss, slingCurves, as.df = TRUE),
                     .id = "Status")
 
@@ -137,16 +135,16 @@ p4a
 
 ```{r}
 df <- bind_cols(
-  as.data.frame(reducedDim(sce, "UMAP")),
-  slingPseudotime(sce) %>% as.data.frame() %>%
+  as.data.frame(reducedDim(fibrosis, "UMAP")),
+  slingPseudotime(fibrosis) %>% as.data.frame() %>%
     dplyr::rename_with(paste0, "_pst", .cols = everything()),
-  slingCurveWeights(sce) %>% as.data.frame(),
+  slingCurveWeights(fibrosis) %>% as.data.frame(),
   ) %>%
   mutate(Lineage1_pst = if_else(is.na(Lineage1_pst), 0, Lineage1_pst),
          Lineage2_pst = if_else(is.na(Lineage2_pst), 0, Lineage2_pst),
          pst = if_else(Lineage1 > Lineage2, Lineage1_pst, Lineage2_pst),
          pst = max(pst) - pst)
-curves <- slingCurves(sce, as.df = TRUE)
+curves <- slingCurves(fibrosis, as.df = TRUE)
 ggplot(df, aes(x = UMAP_1, y = UMAP_2)) +
   geom_point(size = .7, aes(col = pst)) +
   scale_color_viridis_c() +
@@ -163,14 +161,14 @@ ggplot(df, aes(x = UMAP_1, y = UMAP_2)) +
 ## Test
 
 ```{r}
-progressionTest(sce, conditions = sce$Status, lineages = TRUE)
+progressionTest(fibrosis, conditions = fibrosis$Status, lineages = TRUE)
 ```
 
 ## Plot
 
 ```{r}
-df <-  slingPseudotime(sce) %>% as.data.frame() 
-df$Status <- sce$Status
+df <-  slingPseudotime(fibrosis) %>% as.data.frame() 
+df$Status <- fibrosis$Status
 df <- df %>% 
   pivot_longer(-Status, names_to = "Lineage",
                values_to = "pst") %>%
@@ -192,14 +190,14 @@ ggplot(df, aes(x = pst)) +
 ## Test
 
 ```{r}
-fateSelectionTest(sce, conditions = sce$Status)
+fateSelectionTest(fibrosis, conditions = fibrosis$Status)
 ```
 
 ## Plot
 
 ```{r}
-df <- slingCurveWeights(SlingshotDataSet(sce), as.probs = TRUE) %>% as.data.frame()
-df$Status <- sce$Status
+df <- slingCurveWeights(SlingshotDataSet(fibrosis), as.probs = TRUE) %>% as.data.frame()
+df$Status <- fibrosis$Status
 df <- df %>%
   pivot_longer(-Status, names_to = "Lineage", values_to = "ws")
 ggplot(df, aes(x = ws)) +
@@ -223,8 +221,8 @@ library(tradeSeq)
 set.seed(3)
 BPPARAM <- BiocParallel::bpparam()
 BPPARAM$workers <- 3
-icMat <- evaluateK(counts = sce, sds = SlingshotDataSet(sce), 
-                   conditions = factor(sce$Status),
+icMat <- evaluateK(counts = fibrosis, sds = SlingshotDataSet(fibrosis), 
+                   conditions = factor(fibrosis$Status),
                    nGenes = 300, parallel = TRUE, BPPARAM = BPPARAM, k = 3:7)
 ```
 
@@ -235,13 +233,13 @@ Next, we fit the NB-GAMs using 6 knots, based on the pseudotime and cell-level w
 ```{r, eval = FALSE}
 library(tradeSeq)
 set.seed(3)
-sce <- fitGAM(counts = sce, conditions = factor(sce$Status), nknots = 6)
+fibrosis <- fitGAM(counts = fibrosis, conditions = factor(fibrosis$Status), nknots = 6)
 ```
 
 ## Differential expression between conditions
 
 ```{r, eval=TRUE}
-condRes <- conditionTest(sce, l2fc = log2(2), lineages = TRUE)
+condRes <- conditionTest(fibrosis, l2fc = log2(2), lineages = TRUE)
 condRes$padj <- p.adjust(condRes$pvalue_lineage1, "fdr")
 mean(condRes$padj <= 0.05, na.rm = TRUE)
 sum(condRes$padj <= 0.05, na.rm = TRUE)
@@ -252,7 +250,7 @@ conditionGenes <- conditionGenes[!is.na(conditionGenes)]
 ## Differential expression between lineages
 
 ```{r}
-patRes <- patternTest(sce, l2fc = log2(2))
+patRes <- patternTest(fibrosis, l2fc = log2(2))
 patRes$padj <- p.adjust(patRes$pvalue, "fdr")
 mean(patRes$padj <= 0.05, na.rm = TRUE)
 sum(patRes$padj <= 0.05, na.rm = TRUE)
@@ -272,7 +270,7 @@ genes <- c("SCGB3A2", "SFTPC", "ABCA3", "AGER")
 
 # most significant gene
 ps <- lapply(genes, function(gene){
-  plotSmoothers(sce, assays(sce)$counts, gene = gene, curvesCol = scales,
+  plotSmoothers(fibrosis, assays(fibrosis)$counts, gene = gene, curvesCol = scales,
                 border = FALSE, sample = .2) +
     scale_x_reverse(breaks = 0:4/.4, labels = 4:0/.4) +
     labs(title = gene, col = "Lineage and Condition") +
@@ -300,7 +298,7 @@ Below we show heatmaps of the genes DE between lineages The DE genes in the heat
 
 ```{r, eval=TRUE}
 ### based on mean smoother
-yhatSmooth <- predictSmooth(sce, gene = patternGenes, nPoints = 50, tidy = TRUE) %>%
+yhatSmooth <- predictSmooth(fibrosis, gene = patternGenes, nPoints = 50, tidy = TRUE) %>%
   mutate(yhat = log1p(yhat)) %>%
   group_by(gene) %>%
   mutate(yhat = scales::rescale(yhat)) %>%

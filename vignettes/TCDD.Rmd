@@ -74,7 +74,7 @@ The data is imported using a function from the package. We then compute reduced 
 ```{r}
 df <- bind_cols(
   as.data.frame(reducedDims(tcdd)$UMAP),
-  as.data.frame(colData(tcdd)))
+  as.data.frame(colData(tcdd)[, 1:60]))
 p1 <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = treatment)) +
   geom_point(size = .7) +
   scale_color_brewer(palette = "Accent") +
@@ -102,30 +102,26 @@ p3
 To estimate the trajectory, we use _slingshot_ [@Street2018a].
 
 ```{r}
-sds <- slingshot(reducedDim(tcdd, "UMAP"),
-                 clusterLabels = tcdd$celltype,
-                 start.clus = "Central",
-                 end.clus  = "Portal")
+tcdd <- slingshot(tcdd, reducedDim = "UMAP", clusterLabels = tcdd$celltype,
+                  start.clus = "Central", end.clus  = "Portal")
 ```
 
 ```{r}
 set.seed(9764)
-topologyTest(sds, tcdd$treatment, rep = 100, methods = "KS_mean", threshs = .01)
+topologyTest(tcdd, tcdd$treatment)
 ```
 
 ```{r}
 rownames(df) <- colnames(tcdd)
-pst <- data.frame(cells = rownames(sds@reducedDim),
-                  pst = slingPseudotime(sds)[, 1])
 df$cells <- rownames(df)
+pst <- data.frame(cells = colnames(tcdd),
+                  pst = slingPseudotime(tcdd)[, 1])
 df <- dplyr::full_join(df, pst)
 p4 <- ggplot(df, aes(x = UMAP_1, y = UMAP_2, col = pst)) +
   geom_point(size = .7) +
   scale_color_viridis_c() +
   labs(col = "Pseudotime") +
-  geom_path(data = sds@curves$curve1$s[sds@curves$curve1$ord, ] %>%
-              as.data.frame() %>%
-              dplyr::mutate(X = UMAP_1, Y = UMAP_2),
+  geom_path(data = slingCurves(tcdd, as.df = TRUE) %>% arrange(Order),
             col = "black", size = 1.5)
 p4
 ```
@@ -136,12 +132,10 @@ p4
 p5 <- ggplot(df, aes(x = pst)) +
   geom_density(alpha = .8, aes(fill = treatment), col = "transparent") +
   geom_density(aes(col = treatment), fill = "transparent", size = 1.5) +
-  guides(col = FALSE, 
-         fill = guide_legend(
-             override.aes = list(size = 1.5,
-                                 col = c("#7FC97F", "#BEAED4"),
-                                title.position = "top")
-         )) +
+  guides(col = "none", 
+         fill = guide_legend(override.aes = 
+                               list(size = 1.5, col = c("#7FC97F", "#BEAED4"),
+                                    title.position = "top"))) +
   scale_fill_brewer(palette = "Accent") +
   scale_color_brewer(palette = "Accent") +
   labs(x = "Pseudotime", fill = "Treatment")
@@ -149,7 +143,7 @@ p5
 ```
 
 ```{r}
-progressionTest(sds, conditions = tcdd$treatment)
+progressionTest(tcdd, conditions = tcdd$treatment)
 ```
 
 # Differential Expression
@@ -167,7 +161,7 @@ tcdd <- tcdd[filter, ]
 set.seed(3)
 library(BiocParallel)
 BPPARAM <- bpparam()
-BPPARAM$workers <- 5
+BPPARAM$workers <- 3
 BPPARAM$progressbar <- TRUE
 icMat <- evaluateK(counts = as.matrix(assays(tcdd)$counts),
                    pseudotime = slingPseudotime(sds),
@@ -177,12 +171,12 @@ icMat <- evaluateK(counts = as.matrix(assays(tcdd)$counts),
                    k = 3:7, parallel = TRUE,
                    BPPARAM = BPPARAM)
 set.seed(3)
-tcdd@int_metadata$slingshot <- sds
 tcdd <- fitGAM(counts = tcdd,
               conditions = factor(tcdd$treatment),
               nknots = 7,
               verbose = TRUE, 
-              parallel = TRUE)
+              parallel = TRUE,
+              BPPARAM = BPPARAM)
 ```
 
 ## Assessing Differential Expression Accross conditions

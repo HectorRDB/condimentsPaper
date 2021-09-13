@@ -10,6 +10,9 @@
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/anayze_all.html</loc>
   </url>
   <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/reference/anayze_all_per_cond.html</loc>
+  </url>
+  <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/anayze_multiple_conditions.html</loc>
   </url>
   <url>
@@ -22,6 +25,12 @@
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/complex_sce.html</loc>
   </url>
   <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/reference/condRes_monocle.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/reference/create_5_lineages_simu.html</loc>
+  </url>
+  <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/create_bifurcating_simu.html</loc>
   </url>
   <url>
@@ -29,6 +38,15 @@
   </url>
   <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/create_consecutive_bifurcating_simu.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/reference/fibrosis.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/reference/five_lins.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/reference/fivelin_sce.html</loc>
   </url>
   <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/fork.html</loc>
@@ -44,6 +62,9 @@
   </url>
   <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/import_TGFB.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/reference/import_fibrosis.html</loc>
   </url>
   <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/reference/kras.html</loc>
@@ -77,6 +98,9 @@
   </url>
   <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/articles/Examples.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//condimentsPaper/articles/Fibrosis.html</loc>
   </url>
   <url>
     <loc>http://hectorrdb.github.io//condimentsPaper/articles/KRAS.html</loc>

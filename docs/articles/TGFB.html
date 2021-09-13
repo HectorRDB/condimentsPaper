@@ -64,6 +64,9 @@
       <a href="../articles/Examples.html">Figure 1: examples</a>
     </li>
     <li>
+      <a href="../articles/Fibrosis.html">Analysis of the fibrosis datataset</a>
+    </li>
+    <li>
       <a href="../articles/KRAS.html">Analysis of the KRAS datataset</a>
     </li>
     <li>
@@ -81,7 +84,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/HectorRDB/condimentsPaper">
-    <span class="fas fa-github"></span>
+    <span class="fa fa-github"></span>
      
   </a>
 </li>
@@ -95,7 +98,7 @@
 
       
 
-      </header><script src="TGFB_files/header-attrs-2.7/header-attrs.js"></script><script src="TGFB_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="TGFB_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analysis of the TGFB datataset</h1>
@@ -117,12 +120,12 @@
 <div id="dataset" class="section level1">
 <h1 class="hasAnchor">
 <a href="#dataset" class="anchor"></a>Dataset</h1>
-<p>The dataset we will be working with concerns a single-cell RNA-sequencing dataset consisting of two different experiments, which correspond to two treatments. McFaline-Figueroa et al. <span class="citation">(McFaline-Figueroa et al. 2019)</span> studied the epithelial-to-mesenchymal transition (EMT), where cells spatially migrate from the epithelium to the mesenchyme during development.</p>
+<p>The dataset we will be working with concerns a single-cell RNA-sequencing dataset consisting of two different experiments, which correspond to two treatments. McFaline-Figueroa et al. <span class="citation">(McFaline-Figueroa et al. 2019)</span> studied the epithelial-to-mesenchymal transition (EMT), where cells spatially migrate from the epithelium to the mesenchyme during development.</p>
 </div>
 <div id="load-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#load-data" class="anchor"></a>Load data</h1>
-<p>The data is imported using a function from the package. We then normalized using <em>Seurat</em><span class="citation">(Stuart et al. 2019)</span> and compute reduced dimension coordinates with UMAP <span class="citation">(Becht et al. 2019, @McInnes2018)</span>.</p>
+<p>The data is imported using a function from the package. We then normalized using <em>Seurat</em><span class="citation">(Stuart et al. 2019)</span> and compute reduced dimension coordinates with UMAP <span class="citation">McInnes, Healy, and Melville (2018)</span>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tgfb</span> <span class="op">&lt;-</span> <span class="fu">condimentsPaper</span><span class="fu">::</span><span class="fu"><a href="../reference/import_TGFB.html">import_TGFB</a></span><span class="op">(</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat">Seurat</a></span><span class="op">)</span>
@@ -145,12 +148,15 @@
 <span class="co">### Integrate</span>
 <span class="co">########################</span>
 <span class="va">dtlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>Mock <span class="op">=</span> <span class="va">soMock</span>, TGFB <span class="op">=</span> <span class="va">soTGFB</span><span class="op">)</span>
-<span class="va">intfts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SelectIntegrationFeatures.html">SelectIntegrationFeatures</a></span><span class="op">(</span>object.list <span class="op">=</span> <span class="va">dtlist</span>, nfeatures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span> <span class="co"># maxes out at 4080 (why?)</span>
+<span class="va">intfts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SelectIntegrationFeatures.html">SelectIntegrationFeatures</a></span><span class="op">(</span>object.list <span class="op">=</span> <span class="va">dtlist</span>, 
+                                    nfeatures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span>
 <span class="va">dtlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/PrepSCTIntegration.html">PrepSCTIntegration</a></span><span class="op">(</span>object.list <span class="op">=</span> <span class="va">dtlist</span>,
                              anchor.features <span class="op">=</span> <span class="va">intfts</span><span class="op">)</span>
-<span class="va">anchors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindIntegrationAnchors.html">FindIntegrationAnchors</a></span><span class="op">(</span>object.list <span class="op">=</span> <span class="va">dtlist</span>, normalization.method <span class="op">=</span> <span class="st">"SCT"</span>,
+<span class="va">anchors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindIntegrationAnchors.html">FindIntegrationAnchors</a></span><span class="op">(</span>object.list <span class="op">=</span> <span class="va">dtlist</span>, 
+                                  normalization.method <span class="op">=</span> <span class="st">"SCT"</span>,
                                   anchor.features <span class="op">=</span> <span class="va">intfts</span><span class="op">)</span>
-<span class="va">integrated</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/IntegrateData.html">IntegrateData</a></span><span class="op">(</span>anchorset <span class="op">=</span> <span class="va">anchors</span>, normalization.method <span class="op">=</span> <span class="st">"SCT"</span><span class="op">)</span>
+<span class="va">integrated</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/IntegrateData.html">IntegrateData</a></span><span class="op">(</span>anchorset <span class="op">=</span> <span class="va">anchors</span>, 
+                            normalization.method <span class="op">=</span> <span class="st">"SCT"</span><span class="op">)</span>
 <span class="va">integrated</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/RunPCA.html">RunPCA</a></span><span class="op">(</span><span class="va">integrated</span><span class="op">)</span>
 <span class="va">integrated</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/RunUMAP.html">RunUMAP</a></span><span class="op">(</span><span class="va">integrated</span>, dims <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">)</span>
 
@@ -161,7 +167,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">bind_cols</span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">reducedDims</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">UMAP</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">sample_frac</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP_1</span>, y <span class="op">=</span> <span class="va">UMAP_2</span>, col <span class="op">=</span> <span class="va">pheno.treatment_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -199,8 +205,7 @@
 <span class="va">tgfb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/slingshot/man/slingshot.html">slingshot</a></span><span class="op">(</span><span class="va">tgfb</span>, reducedDim <span class="op">=</span> <span class="st">'UMAP'</span>,
                   clusterLabels <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">pheno</span><span class="op">$</span><span class="va">spatial_id</span>,
                   start.clus <span class="op">=</span> <span class="st">'inner'</span>, approx_points <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
-<pre><code>## Using full covariance matrix</code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">821</span><span class="op">)</span>
 <span class="fu">topologyTest</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/slingshot/man/SlingshotDataSet.html">SlingshotDataSet</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span>, <span class="va">tgfb</span><span class="op">$</span><span class="va">pheno</span><span class="op">$</span><span class="va">treatment_id</span>, rep <span class="op">=</span> <span class="fl">100</span>,
              methods <span class="op">=</span> <span class="st">"KS_mean"</span>, threshs <span class="op">=</span> <span class="fl">.01</span><span class="op">)</span></code></pre></div>
@@ -208,10 +213,10 @@
 <pre><code>## Running KS-mean test</code></pre>
 <pre><code>##    method thresh statistic   p.value
 ## 1 KS_mean   0.01  0.013306 0.3847918</code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">bind_cols</span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">reducedDims</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">UMAP</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">[</span>,<span class="op">-</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">sample_frac</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 <span class="va">curve</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/slingshot/man/slingCurves.html">slingCurves</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
@@ -227,30 +232,30 @@
 <div id="differential-progression" class="section level1">
 <h1 class="hasAnchor">
 <a href="#differential-progression" class="anchor"></a>Differential progression</h1>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p5</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">slingPseudotime_1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">.8</span>, <span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">pheno.treatment_id</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"transparent"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_density</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>col <span class="op">=</span> <span class="va">pheno.treatment_id</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"transparent"</span>,
                guide <span class="op">=</span> <span class="cn">FALSE</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Pseudotime"</span>, fill <span class="op">=</span> <span class="st">"Treatment"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">guides</span><span class="op">(</span>col <span class="op">=</span> <span class="cn">FALSE</span>, fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>
+  <span class="fu">guides</span><span class="op">(</span>col <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>
     override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#7FC97F"</span>, <span class="st">"#BEAED4"</span><span class="op">)</span><span class="op">)</span>
   <span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span></code></pre></div>
 <pre><code>## Warning: Ignoring unknown parameters: guide</code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p5</span></code></pre></div>
 <p><img src="TGFB_files/figure-html/plotDensities-1.png" width="672"></p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">progressionTest</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/slingshot/man/SlingshotDataSet.html">SlingshotDataSet</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span>, conditions <span class="op">=</span> <span class="va">tgfb</span><span class="op">$</span><span class="va">pheno</span><span class="op">$</span><span class="va">treatment_id</span><span class="op">)</span></code></pre></div>
 <pre><code>## Registered S3 method overwritten by 'cli':
-##   method     from    
-##   print.boxx spatstat</code></pre>
-<pre><code>## # A tibble: 1 x 3
-##   lineage statistic  p.value
-##   &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;
-## 1 1           0.176 2.20e-16</code></pre>
+##   method     from         
+##   print.boxx spatstat.geom</code></pre>
+<pre><code>## # A tibble: 1 × 3
+##   lineage statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;
+## 1 1           0.176 2.2e-16</code></pre>
 </div>
 <div id="differential-expression" class="section level1">
 <h1 class="hasAnchor">
@@ -259,7 +264,7 @@
 <div id="select-number-of-knots" class="section level2">
 <h2 class="hasAnchor">
 <a href="#select-number-of-knots" class="anchor"></a>Select number of knots</h2>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://statomics.github.io/tradeSeq/index.html">tradeSeq</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
 <span class="va">icMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/evaluateK.html">evaluateK</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span>,
@@ -272,34 +277,32 @@
 <div id="fit-gam" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fit-gam" class="anchor"></a>Fit GAM</h2>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
-<span class="va">tgfb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/fitGAM.html">fitGAM</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span>,
-               pseudotime <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">slingshot</span><span class="op">$</span><span class="va">pseudotime</span>,
-               cellWeights <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">slingshot</span><span class="op">$</span><span class="va">cellWeights.V1</span>,
+<span class="va">tgfb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/fitGAM.html">fitGAM</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">tgfb</span>, nknots <span class="op">=</span> <span class="fl">5</span>,
                conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">pheno</span><span class="op">$</span><span class="va">treatment_id</span><span class="op">)</span>,
-               nknots <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+               <span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">tradeSeq</span><span class="op">$</span><span class="va">converged</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="differential-expression-between-conditions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#differential-expression-between-conditions" class="anchor"></a>Differential expression between conditions</h2>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">condRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/conditionTest.html">conditionTest</a></span><span class="op">(</span><span class="va">tgfb</span>, l2fc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">pvalue</span>, <span class="st">"fdr"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 0.1889995</code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<pre><code>## [1] 0.1807149</code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 1993</code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<pre><code>## [1] 1906</code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">conditionGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">condRes</span><span class="op">)</span><span class="op">[</span><span class="va">condRes</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">]</span>
 <span class="va">conditionGenes</span> <span class="op">&lt;-</span> <span class="va">conditionGenes</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">conditionGenes</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 </div>
 <div id="visualize-most-and-least-significant-gene" class="section level2">
 <h2 class="hasAnchor">
 <a href="#visualize-most-and-least-significant-gene" class="anchor"></a>Visualize most and least significant gene</h2>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span>
 <span class="va">scales</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"Accent"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>
 
@@ -314,7 +317,7 @@
   <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## Scale for 'colour' is already present. Adding another scale for 'colour',
 ## which will replace the existing scale.</code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Second most significant gene</span>
 <span class="va">p7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/plotSmoothers.html">plotSmoothers</a></span><span class="op">(</span><span class="va">tgfb</span>, <span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span>,
               gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,
@@ -323,7 +326,7 @@
   <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## Scale for 'colour' is already present. Adding another scale for 'colour',
 ## which will replace the existing scale.</code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># least significant gene</span>
 <span class="va">p8</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/plotSmoothers.html">plotSmoothers</a></span><span class="op">(</span><span class="va">tgfb</span>, <span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span>,
               gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>,
@@ -332,13 +335,13 @@
   <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span><span class="op">[</span><span class="va">oo</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## Scale for 'colour' is already present. Adding another scale for 'colour',
 ## which will replace the existing scale.</code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p6</span></code></pre></div>
 <p><img src="TGFB_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p7</span></code></pre></div>
 <p><img src="TGFB_files/figure-html/unnamed-chunk-10-2.png" width="672"></p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p8</span></code></pre></div>
 <p><img src="TGFB_files/figure-html/unnamed-chunk-10-3.png" width="672"></p>
 </div>
@@ -346,20 +349,22 @@
 <h2 class="hasAnchor">
 <a href="#heatmaps-of-genes-de-between-conditions" class="anchor"></a>Heatmaps of genes DE between conditions</h2>
 <p>Below we show heatmaps of the genes DE between conditions. The DE genes in the heatmaps are ordered according to a hierarchical clustering on the TGF-Beta condition.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org">scales</a></span><span class="op">)</span>
 <span class="co">### based on mean smoother</span>
-<span class="va">yhatSmooth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/predictSmooth.html">predictSmooth</a></span><span class="op">(</span><span class="va">tgfb</span>, gene <span class="op">=</span> <span class="va">conditionGenes</span>, nPoints <span class="op">=</span> <span class="fl">50</span>, tidy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">yhatSmooth</span> <span class="op">&lt;-</span> 
+  <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/predictSmooth.html">predictSmooth</a></span><span class="op">(</span><span class="va">tgfb</span>, gene <span class="op">=</span> <span class="va">conditionGenes</span>, nPoints <span class="op">=</span> <span class="fl">50</span>, tidy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">yhatSmoothScaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">yhatSmooth</span>,<span class="fl">1</span>, <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/rescale.html">rescale</a></span><span class="op">)</span><span class="op">)</span>
+<span class="va">yhatSmoothScaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">yhatSmooth</span>,<span class="fl">1</span>, <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/rescale.html">rescale</a></span><span class="op">)</span><span class="op">)</span>
 <span class="va">heatSmooth_TGF</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span>, <span class="fl">51</span><span class="op">:</span><span class="fl">100</span><span class="op">]</span>,
   cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>,
   show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"TGF-Beta"</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>,
   silent <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span>
 
-<span class="va">matchingHeatmap_mock</span> <span class="op">&lt;-</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_TGF</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,
+<span class="va">matchingHeatmap_mock</span> <span class="op">&lt;-</span> 
+  <span class="fu">pheatmap</span><span class="op">(</span><span class="va">yhatSmoothScaled</span><span class="op">[</span><span class="va">heatSmooth_TGF</span><span class="op">$</span><span class="va">tree_row</span><span class="op">$</span><span class="va">order</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,
   cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>,
   show_rownames <span class="op">=</span> <span class="cn">FALSE</span>, show_colnames <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"Mock"</span>,
   legend <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span> 
@@ -373,7 +378,7 @@
 <h2 class="hasAnchor">
 <a href="#gene-set-enrichment-analysis" class="anchor"></a>Gene set enrichment analysis</h2>
 <p>This is done using the <em>fgsea</em> package <span class="citation">(Korotkevich, Sukhov, and Sergushichev 2016)</span>.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geneSets</span> <span class="op">&lt;-</span> <span class="fu">msigdbr</span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Mus musculus"</span>, category <span class="op">=</span> <span class="st">"C5"</span>, subcategory <span class="op">=</span> <span class="st">"BP"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span>gene_symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">toupper</a></span><span class="op">(</span><span class="va">gene_symbol</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">gene_symbol</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span> 
@@ -385,9 +390,9 @@
 ## minSize = 10): You are trying to run fgseaSimple. It is recommended to use
 ## fgseaMultilevel. To run fgseaMultilevel, you need to remove the nperm argument
 ## in the fgsea function call.</code></pre>
-<pre><code>## Warning in preparePathwaysAndStats(pathways, stats, minSize, maxSize, gseaParam, : There are ties in the preranked stats (0.03% of the list).
+<pre><code>## Warning in preparePathwaysAndStats(pathways, stats, minSize, maxSize, gseaParam, : There are ties in the preranked stats (0.01% of the list).
 ## The order of those tied genes will be arbitrary, which may produce unexpected results.</code></pre>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">eaRes</span> <span class="op">&lt;-</span> <span class="va">eaRes</span> <span class="op">%&gt;%</span> <span class="fu">arrange</span><span class="op">(</span><span class="va">pval</span><span class="op">)</span>
 <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">eaRes</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -403,121 +408,337 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">GO_BIOLOGICAL_ADHESION</td>
+<td align="left">GOBP_BIOLOGICAL_ADHESION</td>
 <td align="right">0.0000200</td>
-<td align="right">0.0792784</td>
+<td align="right">0.0774385</td>
 </tr>
 <tr class="even">
-<td align="left">GO_ANATOMICAL_STRUCTURE_FORMATION_INVOLVED_IN_MORPHOGENESIS</td>
+<td align="left">GOBP_LOCOMOTION</td>
+<td align="right">0.0000400</td>
+<td align="right">0.0774385</td>
+</tr>
+<tr class="odd">
+<td align="left">GOBP_CELL_MIGRATION</td>
 <td align="right">0.0000600</td>
-<td align="right">0.1057046</td>
-</tr>
-<tr class="odd">
-<td align="left">GO_CELL_MOTILITY</td>
-<td align="right">0.0000800</td>
-<td align="right">0.1057046</td>
+<td align="right">0.0774385</td>
 </tr>
 <tr class="even">
-<td align="left">GO_REGULATION_OF_CELL_ADHESION</td>
-<td align="right">0.0002000</td>
-<td align="right">0.1981960</td>
+<td align="left">GOBP_ANATOMICAL_STRUCTURE_FORMATION_INVOLVED_IN_MORPHOGENESIS</td>
+<td align="right">0.0001000</td>
+<td align="right">0.0967981</td>
 </tr>
 <tr class="odd">
-<td align="left">GO_REGULATION_OF_MITOCHONDRIAL_GENE_EXPRESSION</td>
-<td align="right">0.0003800</td>
-<td align="right">0.3012580</td>
+<td align="left">GOBP_REGULATION_OF_CELL_ADHESION</td>
+<td align="right">0.0003600</td>
+<td align="right">0.2581282</td>
 </tr>
 <tr class="even">
-<td align="left">GO_TRANSCRIPTION_BY_RNA_POLYMERASE_III</td>
-<td align="right">0.0005400</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_TRANSCRIPTION_BY_RNA_POLYMERASE_III</td>
+<td align="right">0.0004000</td>
+<td align="right">0.2581282</td>
 </tr>
 <tr class="odd">
-<td align="left">GO_EXTRACELLULAR_STRUCTURE_ORGANIZATION</td>
-<td align="right">0.0008000</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_EXTERNAL_ENCAPSULATING_STRUCTURE_ORGANIZATION</td>
+<td align="right">0.0006200</td>
+<td align="right">0.3291134</td>
 </tr>
 <tr class="even">
-<td align="left">GO_VASCULATURE_DEVELOPMENT</td>
+<td align="left">GOBP_CELL_POPULATION_PROLIFERATION</td>
+<td align="right">0.0006800</td>
+<td align="right">0.3291134</td>
+</tr>
+<tr class="odd">
+<td align="left">GOBP_VASCULATURE_DEVELOPMENT</td>
 <td align="right">0.0008800</td>
-<td align="right">0.3567529</td>
-</tr>
-<tr class="odd">
-<td align="left">GO_CIRCULATORY_SYSTEM_DEVELOPMENT</td>
-<td align="right">0.0010000</td>
-<td align="right">0.3567529</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="even">
-<td align="left">GO_CELL_MORPHOGENESIS_INVOLVED_IN_DIFFERENTIATION</td>
-<td align="right">0.0010600</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_TAXIS</td>
+<td align="right">0.0013600</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="odd">
-<td align="left">GO_MITOCHONDRIAL_RNA_METABOLIC_PROCESS</td>
-<td align="right">0.0011200</td>
-<td align="right">0.3567529</td>
-</tr>
-<tr class="even">
-<td align="left">GO_REGULATION_OF_CELL_POPULATION_PROLIFERATION</td>
+<td align="left">GOBP_MITOCHONDRIAL_RNA_METABOLIC_PROCESS</td>
 <td align="right">0.0013800</td>
-<td align="right">0.3567529</td>
+<td align="right">0.3656816</td>
+</tr>
+<tr class="even">
+<td align="left">GOBP_CIRCULATORY_SYSTEM_DEVELOPMENT</td>
+<td align="right">0.0014000</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="odd">
-<td align="left">GO_REGULATION_OF_CELLULAR_COMPONENT_MOVEMENT</td>
+<td align="left">GOBP_CELL_JUNCTION_ASSEMBLY</td>
 <td align="right">0.0014200</td>
-<td align="right">0.3567529</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="even">
-<td align="left">GO_MOTOR_NEURON_AXON_GUIDANCE</td>
-<td align="right">0.0014201</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_MOTOR_NEURON_AXON_GUIDANCE</td>
+<td align="right">0.0014601</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="odd">
-<td align="left">GO_N_TERMINAL_PROTEIN_AMINO_ACID_MODIFICATION</td>
-<td align="right">0.0015000</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_REGULATION_OF_CELLULAR_COMPONENT_MOVEMENT</td>
+<td align="right">0.0014800</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="even">
-<td align="left">GO_TAXIS</td>
-<td align="right">0.0015200</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_BLOOD_VESSEL_MORPHOGENESIS</td>
+<td align="right">0.0016400</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="odd">
-<td align="left">GO_CELL_CELL_ADHESION</td>
-<td align="right">0.0015400</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_TUBE_DEVELOPMENT</td>
+<td align="right">0.0016800</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="even">
-<td align="left">GO_CELL_MORPHOGENESIS</td>
-<td align="right">0.0016200</td>
-<td align="right">0.3567529</td>
+<td align="left">GOBP_TUBE_MORPHOGENESIS</td>
+<td align="right">0.0017000</td>
+<td align="right">0.3656816</td>
 </tr>
 <tr class="odd">
-<td align="left">GO_TUBE_DEVELOPMENT</td>
+<td align="left">GOBP_N_TERMINAL_PROTEIN_AMINO_ACID_MODIFICATION</td>
 <td align="right">0.0018000</td>
-<td align="right">0.3755293</td>
+<td align="right">0.3668137</td>
 </tr>
 <tr class="even">
-<td align="left">GO_CELL_PROJECTION_ORGANIZATION</td>
-<td align="right">0.0021200</td>
-<td align="right">0.4043199</td>
+<td align="left">GOBP_CELL_PROJECTION_ORGANIZATION</td>
+<td align="right">0.0020600</td>
+<td align="right">0.3988080</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+<div id="running-with-monocle-3" class="section level1">
+<h1 class="hasAnchor">
+<a href="#running-with-monocle-3" class="anchor"></a>Running with Monocle 3</h1>
+<div id="trajectory-inference-and-differential-progression" class="section level2">
+<h2 class="hasAnchor">
+<a href="#trajectory-inference-and-differential-progression" class="anchor"></a>Trajectory inference and differential progression</h2>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">clusters</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">pheno</span><span class="op">$</span><span class="va">spatial_id</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">clusters</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span>
+<span class="va">clusters</span><span class="op">[</span><span class="fu">reducedDim</span><span class="op">(</span><span class="va">tgfb</span>, <span class="st">"UMAP"</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"outer"</span>
+<span class="va">tgfb</span><span class="op">$</span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="va">tgfb</span><span class="op">$</span><span class="va">pheno</span><span class="op">$</span><span class="va">treatment_id</span>
+<span class="va">cds</span> <span class="op">&lt;-</span> <span class="fu">condimentsPaper</span><span class="fu">:::</span><span class="fu">.running_monocle</span><span class="op">(</span><span class="va">tgfb</span>, <span class="va">clusters</span>, start <span class="op">=</span> <span class="st">"inner"</span>,
+                                          params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>minimal_branch_len <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,
+                                          keep_cds <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<pre><code>## Setting options('download.file.method.GEOquery'='auto')</code></pre>
+<pre><code>## Setting options('GEOquery.inmemory.gpl'=FALSE)</code></pre>
+<pre><code>## No preprocess_method specified, using preprocess_method = 'PCA'</code></pre>
+<pre><code>## Warning: `select_()` was deprecated in dplyr 0.7.0.
+## Please use `select()` instead.</code></pre>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">cds</span><span class="op">$</span><span class="va">cds</span><span class="op">@</span><span class="va">colData</span><span class="op">$</span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="va">tgfb</span><span class="op">$</span><span class="va">condition</span>
+<span class="fu">plot_cells</span><span class="op">(</span><span class="va">cds</span><span class="op">$</span><span class="va">cds</span>, color_cells_by <span class="op">=</span> <span class="st">"conditions"</span>, label_branch_points <span class="op">=</span> <span class="cn">FALSE</span>,
+           label_roots <span class="op">=</span> <span class="cn">FALSE</span>, label_leaves <span class="op">=</span> <span class="cn">FALSE</span>, cell_size <span class="op">=</span> <span class="fl">.7</span>, 
+           label_groups_by_cluster <span class="op">=</span> <span class="cn">FALSE</span>, trajectory_graph_segment_size <span class="op">=</span> <span class="fl">1.5</span>,
+           trajectory_graph_color <span class="op">=</span> <span class="st">"black"</span>, label_cell_groups <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span>,
+        rect <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="TGFB_files/figure-html/monocle3-1.png" width="672"></p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>pseudotime <span class="op">=</span> <span class="va">cds</span><span class="op">$</span><span class="va">pseudotime</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,
+                 Treatment <span class="op">=</span> <span class="va">cds</span><span class="op">$</span><span class="va">conditions</span><span class="op">)</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">pseudotime</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">.8</span>, <span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">Treatment</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"transparent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_density</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>col <span class="op">=</span> <span class="va">Treatment</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"transparent"</span>,
+               guide <span class="op">=</span> <span class="cn">FALSE</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">guides</span><span class="op">(</span>col <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>
+    override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#7FC97F"</span>, <span class="st">"#BEAED4"</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<pre><code>## Warning: Ignoring unknown parameters: guide</code></pre>
+<p><img src="TGFB_files/figure-html/plotDensities%20monocle-1.png" width="672"></p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">progressionTest</span><span class="op">(</span><span class="va">cds</span><span class="op">$</span><span class="va">pseudotime</span>, <span class="va">cds</span><span class="op">$</span><span class="va">cellWeights</span>, conditions <span class="op">=</span> <span class="va">cds</span><span class="op">$</span><span class="va">conditions</span><span class="op">)</span></code></pre></div>
+<pre><code>## # A tibble: 1 × 3
+##   lineage statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;
+## 1 1           0.351 2.2e-16</code></pre>
+</div>
+<div id="fit-gam-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fit-gam-1" class="anchor"></a>Fit GAM</h2>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
+<span class="va">gamModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/fitGAM.html">fitGAM</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu">assays</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span>,
+              pseudotime <span class="op">=</span> <span class="va">cds</span><span class="op">$</span><span class="va">pseudotime</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,
+              cellWeights <span class="op">=</span> <span class="va">cds</span><span class="op">$</span><span class="va">cellWeights</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,
+              conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cds</span><span class="op">$</span><span class="va">conditions</span><span class="op">)</span>,
+              nknots <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">gamModels</span><span class="op">)</span><span class="op">$</span><span class="va">tradeSeq</span><span class="op">$</span><span class="va">converged</span><span class="op">)</span>
+<span class="va">condRes_monocle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tradeSeq/man/conditionTest.html">conditionTest</a></span><span class="op">(</span><span class="va">gamModels</span>, l2fc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<span class="va">condRes_monocle</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span><span class="op">(</span><span class="va">condRes_monocle</span><span class="op">$</span><span class="va">pvalue</span>, <span class="st">"fdr"</span><span class="op">)</span>
+<span class="va">condRes_monocle</span> <span class="op">&lt;-</span> <span class="va">condRes_monocle</span> <span class="op">%&gt;%</span> <span class="fu">mutate</span><span class="op">(</span>gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"condRes_monocle"</span>, package <span class="op">=</span> <span class="st">"condimentsPaper"</span><span class="op">)</span>
+<span class="va">condRes</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span>
+  <span class="st">"Monocle"</span> <span class="op">=</span> <span class="va">condRes_monocle</span>,
+  <span class="st">"Slingshot"</span> <span class="op">=</span> <span class="va">condRes</span> <span class="op">%&gt;%</span> <span class="fu">mutate</span><span class="op">(</span>gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span>,
+  .id <span class="op">=</span> <span class="st">"Trajectory"</span>
+<span class="op">)</span>
+<span class="va">condRes</span> <span class="op">%&gt;%</span> 
+  <span class="fu">select</span><span class="op">(</span><span class="va">Trajectory</span>, <span class="va">gene</span>, <span class="va">waldStat</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"Trajectory"</span>, values_from <span class="op">=</span> <span class="st">"waldStat"</span><span class="op">)</span> <span class="op">%$%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">`Monocle`</span>, <span class="va">.</span><span class="op">$</span><span class="va">`Slingshot`</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] 0.9663965</code></pre>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">condRes</span> <span class="op">%&gt;%</span> 
+  <span class="fu">select</span><span class="op">(</span><span class="va">Trajectory</span>, <span class="va">gene</span>, <span class="va">padj</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"Trajectory"</span>, values_from <span class="op">=</span> <span class="st">"padj"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Monocle</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Slingshot</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>Monocle <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">Monocle</span> <span class="op">&lt;=</span> <span class="fl">.05</span>, <span class="st">"sig"</span>, <span class="st">"not_sig"</span><span class="op">)</span>,
+         Slingshot <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">Slingshot</span> <span class="op">&lt;=</span> <span class="fl">.05</span>, <span class="st">"sig"</span>, <span class="st">"not_sig"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">Monocle</span>, <span class="va">Slingshot</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarise</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by 'Monocle'. You can override using the `.groups` argument.</code></pre>
+<pre><code>## # A tibble: 4 × 3
+## # Groups:   Monocle [2]
+##   Monocle Slingshot     n
+##   &lt;chr&gt;   &lt;chr&gt;     &lt;int&gt;
+## 1 not_sig not_sig    8282
+## 2 not_sig sig         365
+## 3 sig     not_sig     135
+## 4 sig     sig        1500</code></pre>
+</div>
+</div>
+<div id="daseq" class="section level1">
+<h1 class="hasAnchor">
+<a href="#daseq" class="anchor"></a>DASeq</h1>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tgfb</span><span class="op">$</span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="va">tgfb</span><span class="op">$</span><span class="va">pheno</span><span class="op">$</span><span class="va">treatment_id</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"cell"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu">reducedDim</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span>
+<span class="va">tgfb</span><span class="op">$</span><span class="va">Sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">tgfb</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">tgfb</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"TGFB"</span><span class="op">]</span> <span class="op">&lt;-</span> 
+  <span class="va">tgfb</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">tgfb</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"TGFB"</span><span class="op">]</span> <span class="op">+</span> <span class="fl">10</span>
+<span class="va">tgfb</span><span class="op">$</span><span class="va">Sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">$</span><span class="va">Sample</span><span class="op">)</span>
+<span class="va">info</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sample"</span>, <span class="st">"condition"</span><span class="op">)</span><span class="op">]</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span>
+<span class="va">da_cells</span> <span class="op">&lt;-</span> <span class="fu">getDAcells</span><span class="op">(</span>
+  X <span class="op">=</span> <span class="fu">reducedDim</span><span class="op">(</span><span class="va">tgfb</span>, <span class="st">"UMAP"</span><span class="op">)</span>,
+  cell.labels <span class="op">=</span> <span class="va">tgfb</span><span class="op">$</span><span class="va">Sample</span>,
+  labels.1 <span class="op">=</span> <span class="va">info</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">info</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"Mock"</span><span class="op">]</span>,
+  labels.2 <span class="op">=</span> <span class="va">info</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">info</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"TGFB"</span><span class="op">]</span>,
+  k.vector <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">500</span>, <span class="fl">50</span><span class="op">)</span>,
+  do.plot <span class="op">=</span> <span class="cn">TRUE</span>,
+  plot.embedding <span class="op">=</span> <span class="fu">reducedDim</span><span class="op">(</span><span class="va">tgfb</span>, <span class="st">"UMAP"</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
+<pre><code>## Calculating DA score vector.
+## Running GLM.
+## Test on random labels.
+## Setting thresholds based on permutation</code></pre>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">da_regions</span> <span class="op">&lt;-</span> <span class="fu">getDAregion</span><span class="op">(</span>
+  X <span class="op">=</span> <span class="fu">reducedDim</span><span class="op">(</span><span class="va">tgfb</span>, <span class="st">"UMAP"</span><span class="op">)</span>,
+  da.cells <span class="op">=</span> <span class="va">da_cells</span>,
+  cell.labels <span class="op">=</span> <span class="va">tgfb</span><span class="op">$</span><span class="va">Sample</span>,
+  labels.1 <span class="op">=</span> <span class="va">info</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">info</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"Mock"</span><span class="op">]</span>,
+  labels.2 <span class="op">=</span> <span class="va">info</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">info</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"TGFB"</span><span class="op">]</span>,
+  do.plot <span class="op">=</span> <span class="cn">TRUE</span>,
+  plot.embedding <span class="op">=</span> <span class="fu">reducedDim</span><span class="op">(</span><span class="va">tgfb</span>, <span class="st">"UMAP"</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
+<pre><code>## Using min.cell = 50</code></pre>
+<pre><code>## Warning: The following arguments are not used: row.names</code></pre>
+<pre><code>## Warning: Feature names cannot have underscores ('_'), replacing with dashes
+## ('-')</code></pre>
+<pre><code>## Warning: The following arguments are not used: row.names</code></pre>
+<pre><code>## Warning: Feature names cannot have underscores ('_'), replacing with dashes
+## ('-')</code></pre>
+<pre><code>## Warning: The following arguments are not used: row.names</code></pre>
+<pre><code>## Warning: Feature names cannot have underscores ('_'), replacing with dashes
+## ('-')</code></pre>
+<pre><code>## Removing 8 DA regions with cells &lt; 50.</code></pre>
+<pre><code>## Warning in wilcox.test.default(x = idx.label.ratio[labels.2],
+## idx.label.ratio[labels.1]): cannot compute exact p-value with ties</code></pre>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">bind_cols</span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">reducedDims</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">$</span><span class="va">UMAP</span><span class="op">)</span>,
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">da_regions</span><span class="op">$</span><span class="va">cell.idx</span>, <span class="op">]</span>
+<span class="va">df</span><span class="op">$</span><span class="va">region</span> <span class="op">&lt;-</span> <span class="va">da_regions</span><span class="op">$</span><span class="va">da.region.label</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">UMAP_1</span>, <span class="va">UMAP_2</span>, <span class="va">region</span>, <span class="va">condition</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">full_join</span><span class="op">(</span><span class="va">da_regions</span><span class="op">$</span><span class="va">DA.stat</span> <span class="op">%&gt;%</span>
+              <span class="va">as.data.frame</span> <span class="op">%&gt;%</span> 
+              <span class="fu">mutate</span><span class="op">(</span>region <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Joining, by = "region"</code></pre>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">UMAP_1</span>, y <span class="op">=</span> <span class="va">UMAP_2</span>, col <span class="op">=</span> <span class="va">DA.score</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.7</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_colour_gradient2</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>col <span class="op">=</span> <span class="st">"DA Score\nfrom DASeq"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<p><img src="TGFB_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
+</div>
+<div id="milo" class="section level1">
+<h1 class="hasAnchor">
+<a href="#milo" class="anchor"></a>Milo</h1>
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">logcounts</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log1p</a></span><span class="op">(</span><span class="fu">counts</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span><span class="op">)</span>
+<span class="va">milo</span> <span class="op">&lt;-</span> <span class="fu">Milo</span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span>
+<span class="va">milo</span> <span class="op">&lt;-</span> <span class="fu">buildGraph</span><span class="op">(</span><span class="va">milo</span>, reduced.dim <span class="op">=</span> <span class="st">"UMAP"</span>, d <span class="op">=</span> <span class="fl">2</span>, k <span class="op">=</span> <span class="fl">20</span>,
+                   BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Constructing kNN graph with k:20</code></pre>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">milo</span> <span class="op">&lt;-</span> <span class="fu">makeNhoods</span><span class="op">(</span><span class="va">milo</span>, refined <span class="op">=</span> <span class="cn">TRUE</span>, reduced_dims <span class="op">=</span> <span class="st">"UMAP"</span>, d <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<pre><code>## Checking valid object</code></pre>
+<pre><code>## Warning in (function (to_check, X, clust_centers, clust_info, dtype, nn, :
+## detected tied distances to neighbors, see ?'BiocNeighbors-ties'</code></pre>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">milo</span><span class="op">$</span><span class="va">Sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">tgfb</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">milo</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">milo</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"TGFB"</span><span class="op">]</span> <span class="op">&lt;-</span> 
+  <span class="va">milo</span><span class="op">$</span><span class="va">Sample</span><span class="op">[</span><span class="va">milo</span><span class="op">$</span><span class="va">condition</span> <span class="op">==</span> <span class="st">"TGFB"</span><span class="op">]</span> <span class="op">+</span> <span class="fl">5</span>
+<span class="va">milo</span><span class="op">$</span><span class="va">Sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">milo</span><span class="op">$</span><span class="va">Sample</span><span class="op">)</span>
+<span class="va">design.df</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">milo</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"Sample"</span><span class="op">)</span><span class="op">]</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">milo</span> <span class="op">&lt;-</span> <span class="fu">miloR</span><span class="fu">::</span><span class="fu"><a href="https://marionilab.github.io/miloR/reference/countCells.html">countCells</a></span><span class="op">(</span><span class="va">milo</span>, meta.data <span class="op">=</span> <span class="va">design.df</span>, sample <span class="op">=</span> <span class="st">"Sample"</span><span class="op">)</span></code></pre></div>
+<pre><code>## Checking meta.data validity</code></pre>
+<pre><code>## Counting cells in neighbourhoods</code></pre>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">milo</span> <span class="op">&lt;-</span> <span class="fu">calcNhoodDistance</span><span class="op">(</span>x <span class="op">=</span> <span class="va">milo</span>, d <span class="op">=</span> <span class="fl">2</span>, reduced.dim <span class="op">=</span> <span class="st">"UMAP"</span><span class="op">)</span>
+<span class="va">design.df</span> <span class="op">&lt;-</span> <span class="va">design.df</span> <span class="op">%&gt;%</span> <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">design.df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">design.df</span><span class="op">$</span><span class="va">Sample</span>
+<span class="va">da_results</span> <span class="op">&lt;-</span> <span class="fu">testNhoods</span><span class="op">(</span><span class="va">milo</span>, design <span class="op">=</span> <span class="op">~</span> <span class="va">condition</span>, design.df <span class="op">=</span> <span class="va">design.df</span><span class="op">)</span></code></pre></div>
+<pre><code>## Using TMM normalisation</code></pre>
+<pre><code>## Performing spatial FDR correction withk-distance weighting</code></pre>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">milo</span> <span class="op">&lt;-</span> <span class="fu">buildNhoodGraph</span><span class="op">(</span><span class="va">milo</span><span class="op">)</span>
+<span class="va">da_results</span> <span class="op">&lt;-</span> <span class="fu">groupNhoods</span><span class="op">(</span><span class="va">milo</span>, <span class="va">da_results</span>, max.lfc.delta <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<pre><code>## Found 221 DA neighbourhoods at FDR 10%</code></pre>
+<pre><code>## nhoodAdjacency found - using for nhood grouping</code></pre>
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">plotNhoodGraphDA</span><span class="op">(</span><span class="va">milo</span>, <span class="va">da_results</span>, layout <span class="op">=</span> <span class="st">"UMAP"</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">guides</span><span class="op">(</span>edge_width <span class="op">=</span> <span class="st">"none"</span>,
+         size <span class="op">=</span> <span class="st">"none"</span>,
+         fill <span class="op">=</span> <span class="fu">guide_colorbar</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"logFC\nfrom Milo"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"UMAP_1"</span>, y <span class="op">=</span> <span class="st">"UMAP_2"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span>,
+        legend.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="TGFB_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
+</div>
 <div id="session-info" class="section level1">
 <h1 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session info</h1>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.0.3 (2020-10-10)
+<pre><code>## R version 4.1.0 (2021-05-18)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Big Sur 10.16
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -528,98 +749,148 @@
 ## 
 ## other attached packages:
 ##  [1] scales_1.1.1                cowplot_1.1.1              
-##  [3] RColorBrewer_1.1-2          openxlsx_4.2.3             
-##  [5] msigdbr_7.2.1               fgsea_1.16.0               
-##  [7] pheatmap_1.0.12             condiments_0.1.0           
-##  [9] ggplot2_3.3.3               SeuratObject_4.0.0         
-## [11] Seurat_4.0.0                slingshot_1.8.0            
-## [13] princurve_2.1.6             SingleCellExperiment_1.12.0
-## [15] SummarizedExperiment_1.20.0 Biobase_2.50.0             
-## [17] GenomicRanges_1.42.0        GenomeInfoDb_1.26.2        
-## [19] IRanges_2.24.1              S4Vectors_0.28.1           
-## [21] BiocGenerics_0.36.0         MatrixGenerics_1.2.1       
-## [23] matrixStats_0.58.0          tradeSeq_1.5.10            
-## [25] dplyr_1.0.4                
+##  [3] RColorBrewer_1.1-2          magrittr_2.0.1             
+##  [5] DAseq_1.0.0                 miloR_1.0.0                
+##  [7] edgeR_3.34.0                limma_3.48.3               
+##  [9] monocle3_1.0.0              openxlsx_4.2.4             
+## [11] msigdbr_7.4.1               fgsea_1.18.0               
+## [13] pheatmap_1.0.12             condiments_1.1.04          
+## [15] ggplot2_3.3.5               SeuratObject_4.0.2         
+## [17] Seurat_4.0.3                tidyr_1.1.3                
+## [19] slingshot_2.1.1             TrajectoryUtils_1.0.0      
+## [21] princurve_2.1.6             SingleCellExperiment_1.14.1
+## [23] SummarizedExperiment_1.22.0 Biobase_2.52.0             
+## [25] GenomicRanges_1.44.0        GenomeInfoDb_1.28.2        
+## [27] IRanges_2.26.0              S4Vectors_0.30.0           
+## [29] BiocGenerics_0.38.0         MatrixGenerics_1.4.3       
+## [31] matrixStats_0.60.1          tradeSeq_1.7.04            
+## [33] dplyr_1.0.7                
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] utf8_1.1.4             reticulate_1.18        tidyselect_1.1.0      
-##   [4] htmlwidgets_1.5.3      grid_4.0.3             combinat_0.0-8        
-##   [7] docopt_0.7.1           BiocParallel_1.24.1    Rtsne_0.15            
-##  [10] pROC_1.17.0.1          munsell_0.5.0          codetools_0.2-18      
-##  [13] ragg_1.1.1             ica_1.0-2              future_1.21.0         
-##  [16] miniUI_0.1.1.1         withr_2.4.1            colorspace_2.0-0      
-##  [19] fastICA_1.2-2          highr_0.8              knitr_1.31            
-##  [22] rstudioapi_0.13        ROCR_1.0-11            tensor_1.5            
-##  [25] listenv_0.8.0          labeling_0.4.2         slam_0.1-48           
-##  [28] GenomeInfoDbData_1.2.4 polyclip_1.10-0        farver_2.0.3          
-##  [31] rprojroot_2.0.2        parallelly_1.23.0      vctrs_0.3.6           
-##  [34] generics_0.1.0         ipred_0.9-9            xfun_0.21             
-##  [37] Ecume_0.9.0            R6_2.5.0               VGAM_1.1-5            
-##  [40] locfit_1.5-9.4         bitops_1.0-6           spatstat.utils_2.0-0  
-##  [43] cachem_1.0.4           DelayedArray_0.16.1    assertthat_0.2.1      
-##  [46] promises_1.2.0.1       nnet_7.3-15            gtable_0.3.0          
-##  [49] globals_0.14.0         goftest_1.2-2          timeDate_3043.102     
-##  [52] rlang_0.4.10           systemfonts_1.0.1      splines_4.0.3         
-##  [55] lazyeval_0.2.2         ModelMetrics_1.2.2.2   yaml_2.2.1            
-##  [58] reshape2_1.4.4         abind_1.4-5            httpuv_1.5.5          
-##  [61] caret_6.0-86           tools_4.0.3            lava_1.6.8.1          
-##  [64] ellipsis_0.3.1         jquerylib_0.1.3        ggridges_0.5.3        
-##  [67] Rcpp_1.0.6             plyr_1.8.6             zlibbioc_1.36.0       
-##  [70] purrr_0.3.4            RCurl_1.98-1.2         densityClust_0.3      
-##  [73] rpart_4.1-15           deldir_0.2-10          pbapply_1.4-3         
-##  [76] viridis_0.5.1          zoo_1.8-8              ggrepel_0.9.1         
-##  [79] cluster_2.1.1          fs_1.5.0               magrittr_2.0.1        
-##  [82] data.table_1.14.0      scattermore_0.7        lmtest_0.9-38         
-##  [85] RANN_2.6.1             fitdistrplus_1.1-3     patchwork_1.1.1       
-##  [88] mime_0.10              evaluate_0.14          xtable_1.8-4          
-##  [91] sparsesvd_0.2          gridExtra_2.3          transport_0.12-2      
-##  [94] HSMMSingleCell_1.10.0  compiler_4.0.3         tibble_3.1.0          
-##  [97] KernSmooth_2.23-18     crayon_1.4.1           htmltools_0.5.1.1     
-## [100] mgcv_1.8-34            later_1.1.0.1          tidyr_1.1.2           
-## [103] lubridate_1.7.9.2      DBI_1.1.1              MASS_7.3-53.1         
-## [106] Matrix_1.3-2           cli_2.3.1              gower_0.2.2           
-## [109] igraph_1.2.6           pkgconfig_2.0.3        pkgdown_1.6.1         
-## [112] plotly_4.9.3           recipes_0.1.15         foreach_1.5.1         
-## [115] bslib_0.2.4            XVector_0.30.0         prodlim_2019.11.13    
-## [118] stringr_1.4.0          digest_0.6.27          sctransform_0.3.2     
-## [121] RcppAnnoy_0.0.18       DDRTree_0.1.5          spatstat.data_2.0-0   
-## [124] fastmatch_1.1-0        rmarkdown_2.7          leiden_0.3.7          
-## [127] uwot_0.1.10            edgeR_3.32.1           kernlab_0.9-29        
-## [130] shiny_1.6.0            lifecycle_1.0.0        monocle_2.18.0        
-## [133] nlme_3.1-152           jsonlite_1.7.2         desc_1.2.0            
-## [136] viridisLite_0.3.0      limma_3.46.0           fansi_0.4.2           
-## [139] pillar_1.5.0           lattice_0.20-41        fastmap_1.1.0         
-## [142] httr_1.4.2             survival_3.2-7         glue_1.4.2            
-## [145] zip_2.1.1              qlcMatrix_0.9.7        FNN_1.1.3             
-## [148] spatstat_1.64-1        png_0.1-7              iterators_1.0.13      
-## [151] class_7.3-18           stringi_1.5.3          sass_0.3.1            
-## [154] textshaping_0.3.1      memoise_2.0.0          e1071_1.7-4           
-## [157] irlba_2.3.3            future.apply_1.7.0     ape_5.4-1</code></pre>
+##   [1] scattermore_0.7           ModelMetrics_1.2.2.2     
+##   [3] R.methodsS3_1.8.1         Ecume_0.9.1              
+##   [5] ragg_1.1.3                knitr_1.33               
+##   [7] R.utils_2.10.1            irlba_2.3.3              
+##   [9] DelayedArray_0.18.0       data.table_1.14.0        
+##  [11] rpart_4.1-15              flowCore_2.4.0           
+##  [13] GEOquery_2.60.0           RCurl_1.98-1.4           
+##  [15] generics_0.1.0            ScaledMatrix_1.0.0       
+##  [17] leidenbase_0.1.3          GillespieSSA2_0.2.8      
+##  [19] RANN_2.6.1                RcppXPtrUtils_0.1.1      
+##  [21] proxy_0.4-26              future_1.21.0            
+##  [23] tzdb_0.1.2                xml2_1.3.2               
+##  [25] spatstat.data_2.1-0       lubridate_1.7.10         
+##  [27] httpuv_1.6.1              assertthat_0.2.1         
+##  [29] viridis_0.6.1             gower_0.2.2              
+##  [31] xfun_0.24                 hms_1.1.0                
+##  [33] jquerylib_0.1.4           babelgene_21.4           
+##  [35] evaluate_0.14             promises_1.2.0.1         
+##  [37] fansi_0.5.0               igraph_1.2.6             
+##  [39] DBI_1.1.1                 htmlwidgets_1.5.3        
+##  [41] spatstat.geom_2.2-2       purrr_0.3.4              
+##  [43] ellipsis_0.3.2            RSpectra_0.16-0          
+##  [45] cytolib_2.4.0             RcppParallel_5.1.4       
+##  [47] deldir_0.2-10             sparseMatrixStats_1.4.0  
+##  [49] vctrs_0.3.8               remotes_2.4.0            
+##  [51] ROCR_1.0-11               abind_1.4-5              
+##  [53] caret_6.0-88              cachem_1.0.5             
+##  [55] withr_2.4.2               ggforce_0.3.3            
+##  [57] sctransform_0.3.2         goftest_1.2-2            
+##  [59] cluster_2.1.2             lazyeval_0.2.2           
+##  [61] crayon_1.4.1              glmnet_4.1-2             
+##  [63] recipes_0.1.16            pkgconfig_2.0.3          
+##  [65] labeling_0.4.2            tweenr_1.0.2             
+##  [67] nlme_3.1-152              vipor_0.4.5              
+##  [69] transport_0.12-2          nnet_7.3-16              
+##  [71] rlang_0.4.11              globals_0.14.0           
+##  [73] lifecycle_1.0.0           miniUI_0.1.1.1           
+##  [75] rsvd_1.0.5                rprojroot_2.0.2          
+##  [77] polyclip_1.10-0           lmtest_0.9-38            
+##  [79] Matrix_1.3-4              Rhdf5lib_1.14.2          
+##  [81] zoo_1.8-9                 dyngen_1.0.2             
+##  [83] beeswarm_0.4.0            ggridges_0.5.3           
+##  [85] png_0.1-7                 viridisLite_0.4.0        
+##  [87] bitops_1.0-7              R.oo_1.24.0              
+##  [89] rhdf5filters_1.4.0        KernSmooth_2.23-20       
+##  [91] pROC_1.17.0.1             DelayedMatrixStats_1.14.0
+##  [93] shape_1.4.6               stringr_1.4.0            
+##  [95] parallelly_1.27.0         readr_2.0.0              
+##  [97] beachmat_2.8.0            memoise_2.0.0            
+##  [99] plyr_1.8.6                ica_1.0-2                
+## [101] zlibbioc_1.38.0           compiler_4.1.0           
+## [103] dqrng_0.3.0               fitdistrplus_1.1-5       
+## [105] cli_3.0.1                 XVector_0.32.0           
+## [107] listenv_0.8.0             patchwork_1.1.1          
+## [109] pbapply_1.4-3             MASS_7.3-54              
+## [111] mgcv_1.8-36               tidyselect_1.1.1         
+## [113] RProtoBufLib_2.4.0        stringi_1.7.3            
+## [115] textshaping_0.3.5         highr_0.9                
+## [117] yaml_2.2.1                BiocSingular_1.8.1       
+## [119] locfit_1.5-9.4            ggrepel_0.9.1            
+## [121] grid_4.1.0                sass_0.4.0               
+## [123] spatstat.linnet_2.3-0     fastmatch_1.1-0          
+## [125] tools_4.1.0               future.apply_1.7.0       
+## [127] rstudioapi_0.13           foreach_1.5.1            
+## [129] gridExtra_2.3             prodlim_2019.11.13       
+## [131] farver_2.1.0              Rtsne_0.15               
+## [133] DropletUtils_1.12.1       ggraph_2.0.5             
+## [135] proxyC_0.2.0              digest_0.6.27            
+## [137] shiny_1.6.0               lava_1.6.9               
+## [139] Rcpp_1.0.7                scuttle_1.2.0            
+## [141] later_1.2.0               RcppAnnoy_0.0.18         
+## [143] httr_1.4.2                kernlab_0.9-29           
+## [145] colorspace_2.0-2          fs_1.5.0                 
+## [147] tensor_1.5                reticulate_1.20          
+## [149] splines_4.1.0             statmod_1.4.36           
+## [151] lmds_0.1.0                uwot_0.1.10              
+## [153] spatstat.utils_2.2-0      pkgdown_1.6.1            
+## [155] graphlayouts_0.7.1        plotly_4.9.4.1           
+## [157] systemfonts_1.0.2         xtable_1.8-4             
+## [159] jsonlite_1.7.2            spatstat_2.2-0           
+## [161] tidygraph_1.2.0           condimentsPaper_1.0      
+## [163] timeDate_3043.102         ipred_0.9-11             
+## [165] R6_2.5.1                  cydar_1.16.0             
+## [167] pillar_1.6.2              htmltools_0.5.1.1        
+## [169] mime_0.11                 glue_1.4.2               
+## [171] fastmap_1.1.0             BiocParallel_1.26.2      
+## [173] BiocNeighbors_1.10.0      class_7.3-19             
+## [175] codetools_0.2-18          utf8_1.2.2               
+## [177] lattice_0.20-44           bslib_0.2.5.1            
+## [179] spatstat.sparse_2.0-0     tibble_3.1.4             
+## [181] ggbeeswarm_0.6.0          leiden_0.3.8             
+## [183] gtools_3.9.2              zip_2.2.0                
+## [185] survival_3.2-11           rmarkdown_2.9            
+## [187] dynutils_1.0.6            desc_1.3.0               
+## [189] munsell_0.5.0             rhdf5_2.36.0             
+## [191] e1071_1.7-7               GenomeInfoDbData_1.2.6   
+## [193] iterators_1.0.13          HDF5Array_1.20.0         
+## [195] reshape2_1.4.4            gtable_0.3.0             
+## [197] spatstat.core_2.3-0</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references hanging-indent">
-<div id="ref-Becht2019">
-<p>Becht, Etienne, Leland McInnes, John Healy, Charles-Antoine Dutertre, Immanuel W H Kwok, Lai Guan Ng, Florent Ginhoux, and Evan W Newell. 2019. “Dimensionality reduction for visualizing single-cell data using UMAP.” <em>Nature Biotechnology</em> 37 (1): 38–44. <a href="https://doi.org/10.1038/nbt.4314">https://doi.org/10.1038/nbt.4314</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Becht2019" class="csl-entry">
+Becht, Etienne, Leland McInnes, John Healy, Charles-Antoine Dutertre, Immanuel W H Kwok, Lai Guan Ng, Florent Ginhoux, and Evan W Newell. 2019. <span>“<span class="nocase">Dimensionality reduction for visualizing single-cell data using UMAP</span>.”</span> <em>Nature Biotechnology</em> 37 (1): 38–44. <a href="https://doi.org/10.1038/nbt.4314">https://doi.org/10.1038/nbt.4314</a>.
 </div>
-<div id="ref-Korotkevich2016">
-<p>Korotkevich, Gennady, Vladimir Sukhov, and Alexey Sergushichev. 2016. “Fast gene set enrichment analysis.” <em>bioRxiv</em>, February, 060012. <a href="https://doi.org/10.1101/060012">https://doi.org/10.1101/060012</a>.</p>
+<div id="ref-Korotkevich2016" class="csl-entry">
+Korotkevich, Gennady, Vladimir Sukhov, and Alexey Sergushichev. 2016. <span>“<span class="nocase">Fast gene set enrichment analysis</span>.”</span> <em>bioRxiv</em>, February, 060012. <a href="https://doi.org/10.1101/060012">https://doi.org/10.1101/060012</a>.
 </div>
-<div id="ref-McFaline-Figueroa2019">
-<p>McFaline-Figueroa, José L., Andrew J. Hill, Xiaojie Qiu, Dana Jackson, Jay Shendure, and Cole Trapnell. 2019. “A pooled single-cell genetic screen identifies regulatory checkpoints in the continuum of the epithelial-to-mesenchymal transition.” <em>Nature Genetics</em> 51 (9): 1389–98. <a href="https://doi.org/10.1038/s41588-019-0489-5">https://doi.org/10.1038/s41588-019-0489-5</a>.</p>
+<div id="ref-McFaline-Figueroa2019" class="csl-entry">
+McFaline-Figueroa, José L., Andrew J. Hill, Xiaojie Qiu, Dana Jackson, Jay Shendure, and Cole Trapnell. 2019. <span>“<span class="nocase">A pooled single-cell genetic screen identifies regulatory checkpoints in the continuum of the epithelial-to-mesenchymal transition</span>.”</span> <em>Nature Genetics</em> 51 (9): 1389–98. <a href="https://doi.org/10.1038/s41588-019-0489-5">https://doi.org/10.1038/s41588-019-0489-5</a>.
 </div>
-<div id="ref-McInnes2018">
-<p>McInnes, Leland, John Healy, and James Melville. 2018. “UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction.” <em>Arxiv</em>, February. <a href="http://arxiv.org/abs/1802.03426">http://arxiv.org/abs/1802.03426</a>.</p>
+<div id="ref-McInnes2018" class="csl-entry">
+McInnes, Leland, John Healy, and James Melville. 2018. <span>“<span class="nocase">UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</span>.”</span> <em>Arxiv</em>, February. <a href="http://arxiv.org/abs/1802.03426">http://arxiv.org/abs/1802.03426</a>.
 </div>
-<div id="ref-Street2018a">
-<p>Street, Kelly, Davide Risso, Russell B. Fletcher, Diya Das, John Ngai, Nir Yosef, Elizabeth Purdom, and Sandrine Dudoit. 2018. “Slingshot: cell lineage and pseudotime inference for single-cell transcriptomics.” <em>BMC Genomics</em> 19 (1): 477. <a href="https://doi.org/10.1186/s12864-018-4772-0">https://doi.org/10.1186/s12864-018-4772-0</a>.</p>
+<div id="ref-Street2018a" class="csl-entry">
+Street, Kelly, Davide Risso, Russell B. Fletcher, Diya Das, John Ngai, Nir Yosef, Elizabeth Purdom, and Sandrine Dudoit. 2018. <span>“<span class="nocase">Slingshot: cell lineage and pseudotime inference for single-cell transcriptomics</span>.”</span> <em>BMC Genomics</em> 19 (1): 477. <a href="https://doi.org/10.1186/s12864-018-4772-0">https://doi.org/10.1186/s12864-018-4772-0</a>.
 </div>
-<div id="ref-Stuart2019">
-<p>Stuart, Tim, Andrew Butler, Paul Hoffman, Christoph Hafemeister, Efthymia Papalexi, William M Mauck, Yuhan Hao, Marlon Stoeckius, Peter Smibert, and Rahul Satija. 2019. “Comprehensive Integration of Single-Cell Data.” <em>Cell</em> 177 (7): 1888–1902.e21. <a href="https://doi.org/10.1016/j.cell.2019.05.031">https://doi.org/10.1016/j.cell.2019.05.031</a>.</p>
+<div id="ref-Stuart2019" class="csl-entry">
+Stuart, Tim, Andrew Butler, Paul Hoffman, Christoph Hafemeister, Efthymia Papalexi, William M Mauck, Yuhan Hao, Marlon Stoeckius, Peter Smibert, and Rahul Satija. 2019. <span>“<span class="nocase">Comprehensive Integration of Single-Cell Data</span>.”</span> <em>Cell</em> 177 (7): 1888–1902.e21. <a href="https://doi.org/10.1016/j.cell.2019.05.031">https://doi.org/10.1016/j.cell.2019.05.031</a>.
 </div>
-<div id="ref-VandenBerge2020">
-<p>Van den Berge, Koen, Hector Roux de Bézieux, Kelly Street, Wouter Saelens, Robrecht Cannoodt, Yvan Saeys, Sandrine Dudoit, and Lieven Clement. 2020. “Trajectory-based differential expression analysis for single-cell sequencing data.” <em>Nature Communications</em> 11 (1): 1201. <a href="https://doi.org/10.1038/s41467-020-14766-3">https://doi.org/10.1038/s41467-020-14766-3</a>.</p>
+<div id="ref-VandenBerge2020" class="csl-entry">
+Van den Berge, Koen, Hector Roux de Bézieux, Kelly Street, Wouter Saelens, Robrecht Cannoodt, Yvan Saeys, Sandrine Dudoit, and Lieven Clement. 2020. <span>“<span class="nocase">Trajectory-based differential expression analysis for single-cell sequencing data</span>.”</span> <em>Nature Communications</em> 11 (1): 1201. <a href="https://doi.org/10.1038/s41467-020-14766-3">https://doi.org/10.1038/s41467-020-14766-3</a>.
 </div>
 </div>
 </div>

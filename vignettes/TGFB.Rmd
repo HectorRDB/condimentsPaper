@@ -303,7 +303,7 @@ plot_cells(cds$cds, color_cells_by = "conditions", label_branch_points = FALSE,
         rect = element_blank())
 ```
 
-```{r plotDensities}
+```{r plotDensities monocle}
 df <- data.frame(pseudotime = cds$pseudotime[,1],
                  Treatment = cds$conditions)
 ggplot(df, aes(x = pseudotime)) +
