@@ -178,7 +178,7 @@ progressionTest(sds, conditions = kras$Batch, lineages = TRUE)
 p5 <- ggplot(df, aes(x = pst)) +
   geom_density(alpha = .4, aes(fill = Batch), col = "transparent") +
   geom_density(aes(col = Batch), fill = "transparent", size = 1.5) +
-  guides(col = FALSE) +
+  guides(col = "none") +
   scale_fill_brewer(palette = "Accent") +
   scale_color_brewer(palette = "Accent") +
   labs(x = "Pseudotime", fill = "Type") +
