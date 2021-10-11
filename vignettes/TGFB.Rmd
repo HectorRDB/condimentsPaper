@@ -237,6 +237,31 @@ p7
 p8
 ```
 
+### Biologically relevant genes
+
+```{r}
+# TGF genes
+grep(x=conditionGenes, pattern="TGF", value=TRUE)
+
+# plot TGFB receptors
+# Second most significant gene
+pr1 <- plotSmoothers(tgfb, assays(tgfb)$counts,
+              gene = "TGFBR1",
+              alpha = 1, border = TRUE, curvesCols = scales) +
+  scale_color_manual(values = scales) +
+  ggtitle("TGFBR1")
+
+pr2 <- plotSmoothers(tgfb, assays(tgfb)$counts,
+              gene = "TGFBR2",
+              alpha = 1, border = TRUE, curvesCols = scales) +
+  scale_color_manual(values = scales) +
+  ggtitle("TGFBR2")
+
+cowplot::plot_grid(pr1, pr2)
+
+```
+
+
 ## Heatmaps of genes DE between conditions
 
 Below we show heatmaps of the genes DE between conditions. The DE genes in the heatmaps are ordered according to a hierarchical clustering on the TGF-Beta condition.
