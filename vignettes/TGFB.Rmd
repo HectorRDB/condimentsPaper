@@ -241,23 +241,23 @@ p8
 
 ```{r}
 # TGF genes
-grep(x=conditionGenes, pattern="TGF", value=TRUE)
+grep(x = conditionGenes, pattern = "TGF", value = TRUE)
 
 # plot TGFB receptors
 # Second most significant gene
-pr1 <- plotSmoothers(tgfb, assays(tgfb)$counts,
-              gene = "TGFBR1",
-              alpha = 1, border = TRUE, curvesCols = scales) +
+pr1 <- plotSmoothers(tgfb, assays(tgfb)$counts, gene = "TGFBR1", alpha = 1,
+                     border = TRUE, curvesCols = scales) +
   scale_color_manual(values = scales) +
+  guides(col = 'none') +
+  theme(plot.title = element_text(hjust = .5)) +
   ggtitle("TGFBR1")
-
-pr2 <- plotSmoothers(tgfb, assays(tgfb)$counts,
-              gene = "TGFBR2",
-              alpha = 1, border = TRUE, curvesCols = scales) +
+pr1
+pr2 <- plotSmoothers(tgfb, assays(tgfb)$counts, gene = "TGFBR2",
+                     alpha = 1, border = TRUE, curvesCols = scales) +
   scale_color_manual(values = scales) +
+  theme(plot.title = element_text(hjust = .5), legend.position = "top") +
   ggtitle("TGFBR2")
-
-cowplot::plot_grid(pr1, pr2)
+pr2
 
 ```
 
